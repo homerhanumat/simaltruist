@@ -5,7 +5,7 @@
 #' @param initial_alt_males Number of males in initial population with
 #' two alleles for altruism (all other initial males have 0 such alleles).
 #' @param initial_females Number of females in initial population.
-#' @param initial_alt_males Number of females in initial population with
+#' @param initial_alt_females Number of females in initial population with
 #' two alleles for altruism (all other initial females have 0 such alleles).
 #' @param birth_rate_natural Birth rate for the population.
 #' @param death_rate_natural Death rate for a size-zero population. Rises

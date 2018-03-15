@@ -72,7 +72,7 @@ randomMatches <- function(individuals, number_of_couples) {
 #'                 mating_behavior = list(
 #'                   fn = sexualSelection,
 #'                   args = list(
-#'                     matrix(
+#'                     prefs = matrix(
 #'                       c(1, 5, 10, 1, 1, 1, 10, 5, 1),
 #'                       nrow = 3,
 #'                       ncol = 3))))

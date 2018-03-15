@@ -21,6 +21,9 @@ two alleles for altruism (all other initial males have 0 such alleles).}
 
 \item{initial_females}{Number of females in initial population.}
 
+\item{initial_alt_females}{Number of females in initial population with
+two alleles for altruism (all other initial females have 0 such alleles).}
+
 \item{birth_rate_natural}{Birth rate for the population.}
 
 \item{death_rate_natural}{Death rate for a size-zero population. Rises
@@ -51,9 +54,6 @@ warners when population is under attack.}
 
 \item{graph}{If \code{TRUE}, provides a graph of the total
 per-capita warner alleles in population over the generations.}
-
-\item{initial_alt_males}{Number of females in initial population with
-two alleles for altruism (all other initial females have 0 such alleles).}
 }
 \value{
 A data frame with information on the population at

@@ -1,10 +1,11 @@
 ## miscellaneous
+if(getRversion() >= "2.15.1") utils::globalVariables(c("sex", "warner"))
 
 individualInit <- function(initial_males = 100,
                            initial_alt_males = 10,
                            initial_females = 100,
                            initial_alt_females = 10) {
-  
+
   initSize <- initial_males + initial_females
   id <- as.character(1:initSize)
   sex <- c(rep("F", times = initial_females),
@@ -16,7 +17,7 @@ individualInit <- function(initial_males = 100,
   mom <- rep(NA_character_, times = initial_females)
   dad <- rep(NA_character_, times = initial_males)
   data.frame(id, sex, warner, mom, dad, stringsAsFactors = FALSE)
-  
+
 }
 
 popInit <- function(individuals, generations) {
@@ -29,7 +30,7 @@ popInit <- function(individuals, generations) {
   females0 <- with(individuals, sum(sex == "F" & warner == 0))
   females1 <- with(individuals, sum(sex == "F" & warner == 1))
   females2 <- females - females0 - females1
-  initialPop <- data.frame(populationSize, 
+  initialPop <- data.frame(populationSize,
                            males, males0, males1, males2,
                            females, females0, females1, females2)
   initialColumn <- rep(NA_integer_, times = generations + 1)
@@ -56,17 +57,17 @@ relMatrixInit <- function(individuals) {
   relMatrix
 }
 
-getDeathRate <- function(popSize, capacity, 
+getDeathRate <- function(popSize, capacity,
                       death_rate_natural, birth_rate_natural) {
   (birth_rate_natural - death_rate_natural)/capacity * popSize + death_rate_natural
 }
 
 # function to adjust population after births or deaths
 popAdjust <- function(sex, warner) {
-  
+
   # really number of new individuals:
   populationSize <- length(sex)
-  
+
   males <- sum(sex == "M")
   males0 <- sum(sex == "M" & warner == 0)
   males1 <- sum(sex == "M" & warner == 1)
@@ -75,7 +76,7 @@ popAdjust <- function(sex, warner) {
   females0 <- sum(sex == "F" & warner == 0)
   females1 <- sum(sex == "F" & warner == 1)
   females2 <- females - females0 - females1
-  data.frame(populationSize, 
+  data.frame(populationSize,
              males, males0, males1, males2,
              females, females0, females1, females2)
 }

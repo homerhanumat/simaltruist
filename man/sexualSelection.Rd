@@ -33,7 +33,7 @@ pop <- simulate(sim_gens = 200,
                 mating_behavior = list(
                   fn = sexualSelection,
                   args = list(
-                    matrix(
+                    prefs = matrix(
                       c(1, 5, 10, 1, 1, 1, 10, 5, 1),
                       nrow = 3,
                       ncol = 3))))
