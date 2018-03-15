@@ -9,22 +9,33 @@ warnWarners(individuals, number_warned, warner_death_prob, nonwarner_death_prob,
 }
 \arguments{
 \item{individuals}{Data frame containing id, sex, warner-status,
-mother id and father id.}
+mother id and father id.Value provided.}
 
 \item{number_warned}{Maximum number of individuals to warn.}
 
-\item{warner_death_prob}{As in \code{simulate}.}
+\item{warner_death_prob}{As in \code{simulate}.  Value provided.}
 
-\item{nonwarner_death_prob}{As in \code{simulate}.}
+\item{nonwarner_death_prob}{As in \code{simulate}.  Value provided.}
 
-\item{hider_death_prob}{As in \code{simulate}.}
+\item{hider_death_prob}{As in \code{simulate}.  Value provided.}
 
 \item{dominant}{If \code{TRUE}, individuals with 1 or more altruistic
 alleles can warn.}
 }
 \description{
-Example of an lternative function to govern behavior of warners
-under attack.
+Example of an alternative function to govern behavior of warners
+under attack.  User must set values of \code{number_warned} and
+\code{dominant}.
 Warner warns a specified number of the most closely-related
 individuals.  Warners only warn other warners.
+}
+\examples{
+\dontrun{
+pop <- simulate(sim_gens = 200,
+                attack_behavior = list(
+                  fn = warnWarners,
+                  args = list(
+                    number_warned = 7,
+                    dominant = TRUE)))
+}
 }

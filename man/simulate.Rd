@@ -62,3 +62,23 @@ each generation.
 \description{
 Simulate Spread of Gene for Altruism
 }
+\examples{
+\dontrun{
+# use defaults, get a graph:
+pop <- simulate(sim_gens = 400)
+# attacks are infrequent, and it's dangerous to warn:
+pop <- simulate(sim_gens = 200,
+                warner_death_prob = 0.8,
+                attack_prob = 0.05)
+# use an alternative mating function exported by package:
+pop <- simulate(sim_gens = 200,
+                warner_death_prob = 0.8,
+                mating_behavior = list(
+                  fn = sexualSelection,
+                  args = list(
+                    matrix(
+                      c(1, 5, 10, 1, 1, 1, 10, 5, 1),
+                      nrow = 3,
+                      ncol = 3))))
+}
+}

@@ -15,5 +15,9 @@ generation.}
 }
 \description{
 Default function to govern mating.  Each fertile female mates
-with a randomly-selected male.
+with a randomly-selected male.  If the user chooses to modify
+this a as custom function for the \code{mating_behavior}, in
+\code{simulate} it shold be noted that the current values of
+of \code{individuals} and \code{number_of_couples} will be
+provided by the program.
 }

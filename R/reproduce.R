@@ -26,7 +26,11 @@ getChildGenes <- function (mg, dg) {
 #' Random Mating
 #'
 #' Default function to govern mating.  Each fertile female mates
-#' with a randomly-selected male.
+#' with a randomly-selected male.  If the user chooses to modify
+#' this a as custom function for the \code{mating_behavior}, in
+#' \code{simulate} it shold be noted that the current values of
+#' of \code{individuals} and \code{number_of_couples} will be
+#' provided by the program.
 #' @param individuals Data frame containing id, sex, warner-status,
 #' mother id and father id.
 #' @param number_of_couples Number of couples to form in the current
@@ -50,17 +54,29 @@ randomMatches <- function(individuals, number_of_couples) {
 #'
 #' Example of alternative function to govern mating.
 #' Fertile females of each phenotype have distinct preferences
-#' regarding phenotype of a prospective male mate.
+#' regarding phenotype of a prospective male mate.  The user must
+#' set the value of \code{prefs}.
 #' @param individuals Data frame containing id, sex, warner-status,
-#' mother id and father id.
+#' mother id and father id.  Value provided.
 #' @param number_of_couples Number of couples to form in the current
-#' generation.
+#' generation.  Value provided.
 #' @param prefs Numerical matrix with three rows and three columns. First
 #' row gives preferences of female of with 0 altrusits alleles, etc.
 #' Thus the row (1, 5, 10) indicates that female is ten five more likely to
 #' mate with a given 1-allele male than with a given 0-allele male,
 #' and ten times more likely to mate with a 2-allele male than a
 #' 0-allele male.
+#' @examples
+#' \dontrun{
+#' pop <- simulate(sim_gens = 200,
+#'                 mating_behavior = list(
+#'                   fn = sexualSelection,
+#'                   args = list(
+#'                     matrix(
+#'                       c(1, 5, 10, 1, 1, 1, 10, 5, 1),
+#'                       nrow = 3,
+#'                       ncol = 3))))
+#' }
 #' @export
 sexualSelection <- function(individuals,
                             number_of_couples,

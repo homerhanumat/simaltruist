@@ -2,18 +2,32 @@
 #'
 #' Default function to govern behavior of warners under attack.
 #' Warner warns a specified number of the most closely-related
-#' individuals.
+#' individuals.  May be used as an alternative function in which
+#' the values of \code{warnable_relationship} and \code{dominant}
+#' are specified.
 #' @param individuals Data frame containing id, sex, warner-status,
-#' mother id and father id.
+#' mother id and father id.  Value provided.
 #' @param number_warned Maximum number of individuals to warn.
-#' @param warner_death_prob As in \code{simulate}.
-#' @param nonwarner_death_prob As in \code{simulate}.
-#' @param hider_death_prob As in \code{simulate}.
+#' Value provided.
+#' @param warner_death_prob As in \code{simulate}. Value provided.
+#' @param nonwarner_death_prob As in \code{simulate}. Value provided.
+#' @param hider_death_prob As in \code{simulate}. Value provided.
 #' @param warnable_relationship  Lowest allowed relationship-degree
-#' for an individual to be eligible for warning.
-#' @param relMatrix  The current relationship matrix.
+#' for an individual to be eligible for warning.  Default version
+#' sets this to 0.25.
+#' @param relMatrix  The current relationship matrix.  Value provided.
 #' @param dominant If \code{TRUE}, individuals with 1 or more altruistic
-#' alleles can warn.
+#' alleles can warn.  Default version sets this to \code{FALSE}.
+#' @examples
+#' \dontrun{
+#' pop <- simulate(sim_gens = 200,
+#'                 attack_behavior = list(
+#'                   fn = warnRelatives,
+#'                   args = list(
+#'                     number_warned = 7,
+#'                     warnable_relationship = 0.1,
+#'                     dominant = TRUE)))
+#' }
 #' @export
 warnRelatives <- function(
                          individuals,
@@ -58,18 +72,28 @@ warnRelatives <- function(
 
 #' Warning Other Warners
 #'
-#' Example of an lternative function to govern behavior of warners
-#' under attack.
+#' Example of an alternative function to govern behavior of warners
+#' under attack.  User must set values of \code{number_warned} and
+#' \code{dominant}.
 #' Warner warns a specified number of the most closely-related
 #' individuals.  Warners only warn other warners.
 #' @param individuals Data frame containing id, sex, warner-status,
-#' mother id and father id.
+#' mother id and father id.Value provided.
 #' @param number_warned Maximum number of individuals to warn.
-#' @param warner_death_prob As in \code{simulate}.
-#' @param nonwarner_death_prob As in \code{simulate}.
-#' @param hider_death_prob As in \code{simulate}.
+#' @param warner_death_prob As in \code{simulate}.  Value provided.
+#' @param nonwarner_death_prob As in \code{simulate}.  Value provided.
+#' @param hider_death_prob As in \code{simulate}.  Value provided.
 #' @param dominant If \code{TRUE}, individuals with 1 or more altruistic
 #' alleles can warn.
+#' @examples
+#' \dontrun{
+#' pop <- simulate(sim_gens = 200,
+#'                 attack_behavior = list(
+#'                   fn = warnWarners,
+#'                   args = list(
+#'                     number_warned = 7,
+#'                     dominant = TRUE)))
+#' }
 #' @export
 warnWarners <- function(
                          individuals,

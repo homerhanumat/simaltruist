@@ -10,26 +10,41 @@ warnRelatives(individuals, number_warned, warner_death_prob,
 }
 \arguments{
 \item{individuals}{Data frame containing id, sex, warner-status,
-mother id and father id.}
+mother id and father id.  Value provided.}
 
-\item{number_warned}{Maximum number of individuals to warn.}
+\item{number_warned}{Maximum number of individuals to warn.
+Value provided.}
 
-\item{warner_death_prob}{As in \code{simulate}.}
+\item{warner_death_prob}{As in \code{simulate}. Value provided.}
 
-\item{nonwarner_death_prob}{As in \code{simulate}.}
+\item{nonwarner_death_prob}{As in \code{simulate}. Value provided.}
 
-\item{hider_death_prob}{As in \code{simulate}.}
+\item{hider_death_prob}{As in \code{simulate}. Value provided.}
 
 \item{warnable_relationship}{Lowest allowed relationship-degree
-for an individual to be eligible for warning.}
+for an individual to be eligible for warning.  Default version
+sets this to 0.25.}
 
-\item{relMatrix}{The current relationship matrix.}
+\item{relMatrix}{The current relationship matrix.  Value provided.}
 
 \item{dominant}{If \code{TRUE}, individuals with 1 or more altruistic
-alleles can warn.}
+alleles can warn.  Default version sets this to \code{FALSE}.}
 }
 \description{
 Default function to govern behavior of warners under attack.
 Warner warns a specified number of the most closely-related
-individuals.
+individuals.  May be used as an alternative function in which
+the values of \code{warnable_relationship} and \code{dominant}
+are specified.
+}
+\examples{
+\dontrun{
+pop <- simulate(sim_gens = 200,
+                attack_behavior = list(
+                  fn = warnRelatives,
+                  args = list(
+                    number_warned = 7,
+                    warnable_relationship = 0.1,
+                    dominant = TRUE)))
+}
 }

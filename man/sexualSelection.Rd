@@ -9,10 +9,10 @@ sexualSelection(individuals, number_of_couples, prefs = matrix(1, nrow = 3,
 }
 \arguments{
 \item{individuals}{Data frame containing id, sex, warner-status,
-mother id and father id.}
+mother id and father id.  Value provided.}
 
 \item{number_of_couples}{Number of couples to form in the current
-generation.}
+generation.  Value provided.}
 
 \item{prefs}{Numerical matrix with three rows and three columns. First
 row gives preferences of female of with 0 altrusits alleles, etc.
@@ -24,5 +24,18 @@ and ten times more likely to mate with a 2-allele male than a
 \description{
 Example of alternative function to govern mating.
 Fertile females of each phenotype have distinct preferences
-regarding phenotype of a prospective male mate.
+regarding phenotype of a prospective male mate.  The user must
+set the value of \code{prefs}.
+}
+\examples{
+\dontrun{
+pop <- simulate(sim_gens = 200,
+                mating_behavior = list(
+                  fn = sexualSelection,
+                  args = list(
+                    matrix(
+                      c(1, 5, 10, 1, 1, 1, 10, 5, 1),
+                      nrow = 3,
+                      ncol = 3))))
+}
 }
