@@ -3,3 +3,19 @@ url: https://github.com/homerhanumat/simaltruist
 template:
   params:
     bootswatch: yeti
+reference:
+  - title: "Main Function"
+    desc: >
+      The primary function to run a simulation.
+    contents:
+      - simulate
+  - title: "Mating Functions"
+    desc: "Default and custom functions to govern mating behavior."
+    contents:
+      - randomMatches
+      - sexualSelection
+  - title: "Attack Functions"
+    desc: "Default and custom functions to govern warner behavior under attack."
+    contents:
+      - warnRelatives
+      - warnWarners
