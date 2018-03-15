@@ -35,6 +35,12 @@ getChildGenes <- function (mg, dg) {
 #' mother id and father id.
 #' @param number_of_couples Number of couples to form in the current
 #' generation.
+#' \describe{
+#'   \item{females}{character vector of id numbers of females}
+#'   \item{males}{character vector of id numbers of females}
+#' }
+#' The two vectors are of the same length.  Corresponding elements
+#' represent a couple.
 #' @export
 randomMatches <- function(individuals, number_of_couples) {
   females <- subset(individuals, sex == "F")
@@ -66,6 +72,13 @@ randomMatches <- function(individuals, number_of_couples) {
 #' mate with a given 1-allele male than with a given 0-allele male,
 #' and ten times more likely to mate with a 2-allele male than a
 #' 0-allele male.
+#' @return A list with two named elements:
+#' \describe{
+#'   \item{females}{character vector of id numbers of females}
+#'   \item{males}{character vector of id numbers of females}
+#' }
+#' The two vectors are of the same length.  Corresponding elements
+#' represent a couple.
 #' @examples
 #' \dontrun{
 #' pop <- simulate(sim_gens = 200,

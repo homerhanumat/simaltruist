@@ -7,6 +7,7 @@ output:
 
 ```{r include = FALSE}
 library(simaltruist)
+knitr::opts_chunk$set(out.width = "90%", fig.align = "center")
 ```
 
 <br><br>
@@ -34,7 +35,7 @@ library(simaltruist)
 
 Here is a simple example:
 
-```{r cache = TRUE, out.width = "90%", fig.align = "center", fig.cap = "A graph for free!"}
+```{r cache = TRUE, fig.cap = "A graph for free!"}
 pop <- simulate(sim_gens = 400,
                 warner_death_prob = 0.8)
 ```
@@ -58,7 +59,7 @@ Both of these behaviors may be controlled and programmed by the user, by means o
 
 ### Mating Behavior
 
-By default, the behavior of a mating couple of determined by the function `randomMatches()`, the source code of which is given below:
+By default, the behavior of a mating couple is determined by the function `randomMatches()`, the source code of which is given below:
 
 ```{r eval = FALSE}
 randomMatches <- function(individuals, number_of_couples) {
@@ -103,7 +104,7 @@ sexualSelection <- function(
 
 Examples of its use are provided in the package documentation, e.g.:
 
-```{r eval = FALSE}
+```{r fig.cap="Sexual selection:  opposites attract!"}
 pop <- simulate(sim_gens = 200,
                 mating_behavior = list(
                   fn = sexualSelection,
@@ -132,13 +133,30 @@ For custom mating functions the possible provided parameters are:
 * `number_of_couples`
 * `relMatrix`, a matrix (described below) of relationship-degree between living individuals.
 
+Note that a custom mating function must return a named list containing two elements:
+
+* `females`:  a character vector consisting of the id numbers of female mates;
+* `males`:  a character vector consisting of the id numbers of male mates.
+
+Corresponding elements of the two vectors represent a single couple.
+
 ### Attack Behavior
 
 By default the behavior of a warner when the population is under attack is governed by the function `warnRelatives()`, described in the package documentation.  Again it is possible for the user to pass in a modified version of this function or an entirely new function, via the parameter `attack_behavior`.
 
-An example of an alternative attack-behavior function is the exported function [`warnWarners()`](https://github.com/homerhanumat/simaltruist/blob/master/R/attack.R), in which each warner warns only other warners, without regard to their relationship to him or her.
+An example of an alternative attack-behavior function is the exported function [`warnWarners()`](https://github.com/homerhanumat/simaltruist/blob/master/R/attack.R), in which each warner warns only other warners, without regard to their relationship to him or her:
 
-  Again it is only necessary to set the values of parameters that are not automatically provided by the `simulate()` function.  Provided values are as follows:
+```{r cache = TRUE, fig,cap = "Here, each 2-allele warner can warn up to seven warners."}
+pop <- simulate(sim_gens = 100,
+                attack_behavior = list(
+                  fn = warnWarners,
+                  args = list(
+                    number_warned = 7,
+                    dominant = TRUE)))
+```
+
+
+Again it is only necessary to set the values of parameters that are not automatically provided by the `simulate()` function.  Provided values are as follows:
   
 * `individuals`, described previously;
 * three parameters provided to `simulate()`:
@@ -147,7 +165,7 @@ An example of an alternative attack-behavior function is the exported function [
     * `hider_death_prob`
 * `relMatrix`, a matrix with row and columns names corresponding to the ID-numbers of all living individuals.  The cells give the degree of relationship between any given pair of individuals.
 
-
+Note that a custom attack function must return a numerical vector of death probabilities, with the $i^{\text{th}}$ element corresponding to row $i$ of `individuals`.
     
 
 

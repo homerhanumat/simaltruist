@@ -104,7 +104,7 @@ A graph for free!
 <div id="mating-behavior" class="section level3">
 <h3 class="hasAnchor">
 <a href="#mating-behavior" class="anchor"></a>Mating Behavior</h3>
-<p>By default, the behavior of a mating couple of determined by the function <code><a href="reference/randomMatches.html">randomMatches()</a></code>, the source code of which is given below:</p>
+<p>By default, the behavior of a mating couple is determined by the function <code><a href="reference/randomMatches.html">randomMatches()</a></code>, the source code of which is given below:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">randomMatches &lt;-<span class="st"> </span><span class="cf">function</span>(individuals, number_of_couples) {
   females &lt;-<span class="st"> </span><span class="kw">subset</span>(individuals, sex <span class="op">==</span><span class="st"> "F"</span>)
   breedingFemales &lt;-<span class="st"> </span>females[<span class="kw">sample</span>(
@@ -150,6 +150,11 @@ A graph for free!
                       <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">1</span>),
                       <span class="dt">nrow =</span> <span class="dv">3</span>,
                       <span class="dt">ncol =</span> <span class="dv">3</span>))))</code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-8-1.png" alt="Sexual selection:  opposites attract!" width="90%"><p class="caption">
+Sexual selection: opposites attract!
+</p>
+</div>
 <p>In the above example, the preference matrix is:</p>
 <table class="table">
 <thead><tr class="header">
@@ -189,12 +194,27 @@ A graph for free!
 <li>
 <code>relMatrix</code>, a matrix (described below) of relationship-degree between living individuals.</li>
 </ul>
+<p>Note that a custom mating function must return a named list containing two elements:</p>
+<ul>
+<li>
+<code>females</code>: a character vector consisting of the id numbers of female mates;</li>
+<li>
+<code>males</code>: a character vector consisting of the id numbers of male mates.</li>
+</ul>
+<p>Corresponding elements of the two vectors represent a single couple.</p>
 </div>
 <div id="attack-behavior" class="section level3">
 <h3 class="hasAnchor">
 <a href="#attack-behavior" class="anchor"></a>Attack Behavior</h3>
 <p>By default the behavior of a warner when the population is under attack is governed by the function <code><a href="reference/warnRelatives.html">warnRelatives()</a></code>, described in the package documentation. Again it is possible for the user to pass in a modified version of this function or an entirely new function, via the parameter <code>attack_behavior</code>.</p>
-<p>An example of an alternative attack-behavior function is the exported function <a href="https://github.com/homerhanumat/simaltruist/blob/master/R/attack.R"><code><a href="reference/warnWarners.html">warnWarners()</a></code></a>, in which each warner warns only other warners, without regard to their relationship to him or her.</p>
+<p>An example of an alternative attack-behavior function is the exported function <a href="https://github.com/homerhanumat/simaltruist/blob/master/R/attack.R"><code><a href="reference/warnWarners.html">warnWarners()</a></code></a>, in which each warner warns only other warners, without regard to their relationship to him or her:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="reference/simulate.html">simulate</a></span>(<span class="dt">sim_gens =</span> <span class="dv">100</span>,
+                <span class="dt">attack_behavior =</span> <span class="kw">list</span>(
+                  <span class="dt">fn =</span> warnWarners,
+                  <span class="dt">args =</span> <span class="kw">list</span>(
+                    <span class="dt">number_warned =</span> <span class="dv">7</span>,
+                    <span class="dt">dominant =</span> <span class="ot">TRUE</span>)))</code></pre></div>
+<p><img src="index_files/figure-html/fig-1.png" width="90%" style="display: block; margin: auto;"></p>
 <p>Again it is only necessary to set the values of parameters that are not automatically provided by the <code><a href="reference/simulate.html">simulate()</a></code> function. Provided values are as follows:</p>
 <ul>
 <li>
@@ -209,6 +229,7 @@ A graph for free!
 <li>
 <code>relMatrix</code>, a matrix with row and columns names corresponding to the ID-numbers of all living individuals. The cells give the degree of relationship between any given pair of individuals.</li>
 </ul>
+<p>Note that a custom attack function must return a numerical vector of death probabilities, with the <span class="math inline">\(i^{\text{th}}\)</span> element corresponding to row <span class="math inline">\(i\)</span> of <code>individuals</code>.</p>
 </div>
 </div>
 </div>

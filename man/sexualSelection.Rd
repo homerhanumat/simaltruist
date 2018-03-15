@@ -21,6 +21,15 @@ mate with a given 1-allele male than with a given 0-allele male,
 and ten times more likely to mate with a 2-allele male than a
 0-allele male.}
 }
+\value{
+A list with two named elements:
+\describe{
+  \item{females}{character vector of id numbers of females}
+  \item{males}{character vector of id numbers of females}
+}
+The two vectors are of the same length.  Corresponding elements
+represent a couple.
+}
 \description{
 Example of alternative function to govern mating.
 Fertile females of each phenotype have distinct preferences

@@ -57,10 +57,27 @@ per-capita warner alleles in population over the generations.}
 }
 \value{
 A data frame with information on the population at
-each generation.
+each generation.  Each row describes the population at the end of
+a single birth-death-attack cycle.   Variables are:
+\describe{
+  \item{populationSize}{total population}
+  \item{males}{total number of males}
+  \item{males0}{number of males with no alleles for altruism}
+  \item{males1}{number of males with one allele for altruism}
+  \item{males2}{number of males with two alleles for altruism}
+  \item{females}{total number of females}
+  \item{females0}{number of females with no alleles for altruism}
+  \item{females1}{number of females with one allele for altruism}
+  \item{females2}{number of females with two alleles for altruism}
+}
 }
 \description{
 Simulate Spread of Gene for Altruism
+}
+\note{
+For details on \code{mating_behavior} and \code{attack_behavior}
+consult the
+\href{https://homerhanumat.github.io/simaltruist}{package documentation}.
 }
 \examples{
 \dontrun{

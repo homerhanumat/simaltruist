@@ -177,7 +177,25 @@ per-capita warner alleles in population over the generations.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A data frame with information on the population at
-each generation.</p>
+each generation.  Each row describes the population at the end of
+a single birth-death-attack cycle.   Variables are:</p><dl class='dl-horizontal'>
+  <dt>populationSize</dt><dd><p>total population</p></dd>
+  <dt>males</dt><dd><p>total number of males</p></dd>
+  <dt>males0</dt><dd><p>number of males with no alleles for altruism</p></dd>
+  <dt>males1</dt><dd><p>number of males with one allele for altruism</p></dd>
+  <dt>males2</dt><dd><p>number of males with two alleles for altruism</p></dd>
+  <dt>females</dt><dd><p>total number of females</p></dd>
+  <dt>females0</dt><dd><p>number of females with no alleles for altruism</p></dd>
+  <dt>females1</dt><dd><p>number of females with one allele for altruism</p></dd>
+  <dt>females2</dt><dd><p>number of females with two alleles for altruism</p></dd>
+</dl>
+
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>For details on <code>mating_behavior</code> and <code>attack_behavior</code>
+consult the
+<a href='https://homerhanumat.github.io/simaltruist'>package documentation</a>.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -206,6 +224,8 @@ each generation.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#note">Note</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

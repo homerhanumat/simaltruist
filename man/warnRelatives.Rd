@@ -30,6 +30,11 @@ sets this to 0.25.}
 \item{dominant}{If \code{TRUE}, individuals with 1 or more altruistic
 alleles can warn.  Default version sets this to \code{FALSE}.}
 }
+\value{
+A numerical vector of death probabilities in which the
+\eqn{i^{\text{th}}} element corresponds to row \eqn{i} of
+\code{individuals}.
+}
 \description{
 Default function to govern behavior of warners under attack.
 Warner warns a specified number of the most closely-related

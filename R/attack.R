@@ -18,6 +18,9 @@
 #' @param relMatrix  The current relationship matrix.  Value provided.
 #' @param dominant If \code{TRUE}, individuals with 1 or more altruistic
 #' alleles can warn.  Default version sets this to \code{FALSE}.
+#' @return A numerical vector of death probabilities in which the
+#' \eqn{i^{\text{th}}} element corresponds to row \eqn{i} of
+#' \code{individuals}.
 #' @examples
 #' \dontrun{
 #' pop <- simulate(sim_gens = 200,
@@ -85,6 +88,9 @@ warnRelatives <- function(
 #' @param hider_death_prob As in \code{simulate}.  Value provided.
 #' @param dominant If \code{TRUE}, individuals with 1 or more altruistic
 #' alleles can warn.
+#' @return A numerical vector of death probabilities in which the
+#' \eqn{i^{\text{th}}} element corresponds to row \eqn{i} of
+#' \code{individuals}.
 #' @examples
 #' \dontrun{
 #' pop <- simulate(sim_gens = 200,

@@ -22,6 +22,11 @@ mother id and father id.Value provided.}
 \item{dominant}{If \code{TRUE}, individuals with 1 or more altruistic
 alleles can warn.}
 }
+\value{
+A numerical vector of death probabilities in which the
+\eqn{i^{\text{th}}} element corresponds to row \eqn{i} of
+\code{individuals}.
+}
 \description{
 Example of an alternative function to govern behavior of warners
 under attack.  User must set values of \code{number_warned} and
