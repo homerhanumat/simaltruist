@@ -11,13 +11,16 @@ randomMatches(individuals, number_of_couples)
 mother id and father id.}
 
 \item{number_of_couples}{Number of couples to form in the current
-generation.
+generation.}
+}
+\value{
+A named list with two elements:
 \describe{
   \item{females}{character vector of id numbers of females}
   \item{males}{character vector of id numbers of females}
 }
 The two vectors are of the same length.  Corresponding elements
-represent a couple.}
+represent a couple.
 }
 \description{
 Default function to govern mating.  Each fertile female mates

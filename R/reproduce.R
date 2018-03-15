@@ -35,6 +35,7 @@ getChildGenes <- function (mg, dg) {
 #' mother id and father id.
 #' @param number_of_couples Number of couples to form in the current
 #' generation.
+#' @return A named list with two elements:
 #' \describe{
 #'   \item{females}{character vector of id numbers of females}
 #'   \item{males}{character vector of id numbers of females}
