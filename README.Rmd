@@ -2,7 +2,7 @@
 title: "Altruistic Behavior in Animal Populations"
 output:
   html_document:
-    keep_md: true
+    keep_md: false
 ---
 
 ```{r include = FALSE}
