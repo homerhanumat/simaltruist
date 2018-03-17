@@ -50,12 +50,43 @@ DT::datatable(pop)
 
 ## Writing and Using Custom Functions
 
-The `simulate()` function provides for a certain amount of customization of two important phases in the simulation of a single generation:
+The `simulate()` function provides for a extensive customization of three important phases in the simulation of a single generation:
 
 * the way in which mating couples are formed;
+* the chance of death (by cause other than predator attack) in a "culling";
 * how warners behave when the population is under attack by a predator.
 
-Both of these behaviors may be controlled and programmed by the user, by means of the parameters `mating_behavior` and `attack_behavior`.
+Both of these behaviors may be controlled and programmed by the user, by means of the parameters `mating_behavior`, `culling_behavior` and `attack_behavior`.
+
+All custom functions have the following values provided by the `simulate()` program, provided that appear as named parameters in definition of the function:
+
+* `individuals`:  a data frame that is computed at the beginning of each generation.  Each row represents a living member of the population.  The columns are:
+    * `id`:  a string giving the ID-number of the individual;
+    * `sex`:  the sex of the individual;
+    * `warner`:  a numerical variable with values 0, 1, or 2, giving the number of altruistic alleles the individual possesses.
+    * `mom`: a string giving the ID-number of the individual's mother;
+    * `dad`: a string giving the ID-number of the individual's mother.
+* `population`: a data frame on the population at each generation up to the current one.  Columns are:
+    * `populationSize`;
+    * `males`:  total number of males in the current generation;
+    * `males0`:  number of males with 0 altruist alleles;
+    * `males1`:  number of males with 1 altruist allele;
+    * `males2`:  number of males with 2 altruist alleles;
+    * `females`:  total number of females in the current generation;
+    * `females0`:  number of females with 0 altruist alleles;
+    * `females1`:  number of females with 1 altruist allele;
+    * `females2`:  number of females with 2 altruist alleles
+* `relMatrix`: a matrix with row and columns names corresponding to the ID-numbers of all living individuals.  The cells give the degree of relationship between any given pair of individuals.
+* `current_gen`:  the current generation (starts with 1);
+* all of the following values already passed into the `simulate()` function:
+    * `average_litter_size`
+    * `birth_rate_natural`
+    * `death_rate_natural`
+    * `prob_attack`
+    * `warner_death_prob`
+    * `nonwarner_death_prob`
+    * `hider_death_prob`
+    * `capacity`
 
 ### Mating Behavior
 
@@ -79,15 +110,9 @@ randomMatches <- function(individuals, number_of_couples) {
 
 As the code shows, the default behavior is for fertile females to select randomly from the set of males.
 
-As for the arguments, `individuals` is a data frame that is computed at the beginning of each generation.  Each row represents a living member of the population.  The columns are:
+It is possible to write one's own mating function and pass it to `simulate()` via the `mating_behavior` parameter.  Such a function has access to all of the values listed above, as well as `number_of_couples`, the number of couples that should form in the current generation in order to satisfy the required birth rate.
 
-* `id`:  a string giving the ID-number of the individual;
-* `sex`:  the sex of the individual;
-* `warner`:  a numerical variable with values 0, 1, or 2, giving the number of altruistic alleles the individual possesses.
-* `mom`: a string giving the ID-number of the individual's mother;
-* `dad`: a string giving the ID-number of the individual's mother.
-
-It is possible to write one's own mating function and pass it to `simulate()` via the `mating_behavior` parameter.  An example of such a custom function is exported by **simaltruist** as `sexualSelection()`, the source code for which maybe be viewed [here](https://github.com/homerhanumat/simaltruist/blob/master/R/reproduce.R).
+An example of such a custom function is exported by **simaltruist** as `sexualSelection()`, the source code for which maybe be viewed [here](https://github.com/homerhanumat/simaltruist/blob/master/R/reproduce.R).
 
 The formal parameters of the function are shown in the definition below:
 
@@ -127,26 +152,52 @@ We see that 0-allele females prefer 1-allele and 2-allele males.  In fact when p
 
 Note that `args` specifies only the value of the `prefs` parameter of `sexualSelection`.  The other two parameters of this function---`individuals` and `number_of_couples` are computed by `simulate()` and provided to `sexualSelection()` when it is called.
 
-For custom mating functions the possible provided parameters are:
-
-* `individuals`, the data frame described above;
-* `number_of_couples`
-* `relMatrix`, a matrix (described below) of relationship-degree between living individuals.
-
-Note that a custom mating function must return a named list containing two elements:
+Note also that a custom mating function must return a named list containing two elements:
 
 * `females`:  a character vector consisting of the id numbers of female mates;
 * `males`:  a character vector consisting of the id numbers of male mates.
 
 Corresponding elements of the two vectors represent a single couple.
 
+### Culling Behavior
+
+In any generation there is a culling phase that represents death by all causes other than a mass attack on the colony by predators.  The death-rate for this phase is computed as a linear function of population-size that is equal to `death_rate_natrual` when the population is zero and is equal to `birth_rate_natural` when the population is at capacity.
+
+The default culling function assigns this computed death-rate `dr` as the probability of death for each individual in the population during the culling phase.
+
+Custom culling functions may be written.  As with custom mating functions have access to all values in the list above, but they also have access to `dr`.  An example of a custom culling function is as follows:
+
+```{r}
+weakWarners <- function(individuals, dr) {
+  warner <- individuals$warner
+  deathProb <- numeric(length(warner))
+  deathProb[warner == 0] <- dr
+  deathProb[warner == 1] <- dr * 2
+  deathProb[warner == 2] <- dr * 5
+  deathProb
+}
+```
+
+This function gives warners a much higher chance of death during the culling phase.  (Perhaps they expend a lot of energy patrolling for predators.)
+
+An example of use of this function is as follows.  It assumes a scenario in which there are no predator attacks.
+
+```{r cache = TRUE, fig.cap = "Weak wanrners go extinct!"}
+pop <- simulate(sim_gens = 200, prob_attack = 0,
+                culling_behavior = list(fn = weakWarners,
+                                        args = list()))
+```
+
+Note that `weakWarners()` has no arguments beyond those whose values are provided by the `simulate()` function, so we set `args` to the empty list.
+
+
 ### Attack Behavior
 
-By default the behavior of a warner when the population is under attack is governed by the function `warnRelatives()`, described in the package documentation.  Again it is possible for the user to pass in a modified version of this function or an entirely new function, via the parameter `attack_behavior`.
+By default the behavior of a warner when the population is under attack is governed by the function `warnRelatives()`, described in the package documentation.  Again it is possible for the user to pass in a modified version of this function or an entirely new function, via the parameter `attack_behavior`.  A custom attack function has access to any values in the list above, provided that the value appears as a parameter in the definition of the function.
 
 An example of an alternative attack-behavior function is the exported function [`warnWarners()`](https://github.com/homerhanumat/simaltruist/blob/master/R/attack.R), in which each warner warns only other warners, without regard to their relationship to him or her:
 
-```{r cache = TRUE, fig,cap = "Here, each 2-allele warner can warn up to seven warners."}
+```{r cache = TRUE, fig.cap = "Here, each 2-allele warner can warn up to seven warners."}
 pop <- simulate(sim_gens = 100,
                 attack_behavior = list(
                   fn = warnWarners,
@@ -156,14 +207,7 @@ pop <- simulate(sim_gens = 100,
 ```
 
 
-Again it is only necessary to set the values of parameters that are not automatically provided by the `simulate()` function.  Provided values are as follows:
-  
-* `individuals`, described previously;
-* three parameters provided to `simulate()`:
-    * `warner_death_prob`
-    * `nonwarner_death_prob`
-    * `hider_death_prob`
-* `relMatrix`, a matrix with row and columns names corresponding to the ID-numbers of all living individuals.  The cells give the degree of relationship between any given pair of individuals.
+Again it is only necessary to set the values of parameters that are not automatically provided by the `simulate()` function.
 
 Note that a custom attack function must return a numerical vector of death probabilities, with the $i^{\text{th}}$ element corresponding to row $i$ of `individuals`.
     

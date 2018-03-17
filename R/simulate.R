@@ -26,11 +26,14 @@
 #' @param capacity Carrying capacity of the population.
 #' @param mating_behavior Custom function to govern how eligible
 #' partners form couples.
+#' @param culling_behavior Custom function to determine death
+#' probabilities of individuals at the culling stage..
 #' @param attack_behavior Custom function to govern behavior of
 #' warners when population is under attack.
 #' @param graph If \code{TRUE}, provides a graph of the total
 #' per-capita warner alleles in population over the generations.
-#' @note For details on \code{mating_behavior} and \code{attack_behavior}
+#' @note For details on \code{mating_behavior}, \code{mating_behavior}
+#' and \code{attack_behavior}
 #' consult the
 #' \href{https://homerhanumat.github.io/simaltruist}{package documentation}.
 #' @return A data frame with information on the population at
@@ -82,18 +85,16 @@ simulate <- function(
                      sim_gens = 2,
                      capacity = 2000,
                      mating_behavior = NULL,
+                     culling_behavior = NULL,
                      attack_behavior = NULL,
                      graph = TRUE) {
 
-  individuals <- individualInit(
+  individuals = individualInit(
     initial_pop = initial_pop
   )
-  maxId <- max(as.numeric(individuals$id))
-  population <- popInit(individuals, sim_gens)
-  relMatrix <- relMatrixInit(individuals)
   # provideable variables:
   pvd <- list(
-    individuals = max(as.numeric(individuals$id)),
+    individuals = individuals,
     population = popInit(individuals, sim_gens),
     relMatrix = relMatrixInit(individuals),
     average_litter_size = average_litter_size,
@@ -106,10 +107,11 @@ simulate <- function(
     current_gen = 0,
     capacity = capacity
   )
+  maxId <- max(as.numeric(pvd$individuals$id))
 
   # go through the generations
   for (i in 1:sim_gens) {
-    pvd$current_gen <- i
+    pvd$current_gen <- i + 1
     ## reproduce:
     if (pvd$population$males[i] > 0 & pvd$population$females[i] > 0) {
       # compute number of couples
@@ -140,9 +142,9 @@ simulate <- function(
       birth_rate_natural = birth_rate_natural
     )
     lst <- cull(
+      pvd,
       dr = dr,
-      individuals = pvd$individuals,
-      relMatrix = pvd$relMatrix
+      culling_behavior = culling_behavior
     )
     pvd$individuals <- lst$individuals
     pvd$relMatrix <- lst$relMatrix
@@ -170,7 +172,7 @@ simulate <- function(
       pvd$population,
       (2 * (males2 + females2) + males1 + females1) / (males + females)
     )
-    generation <- 0:nrow(pvd$population)
+    generation <- 0:(nrow(pvd$population) - 1)
     df <- data.frame(generation, altProp)
     p <-
       ggplot(df, aes(x = generation, y = altProp)) +

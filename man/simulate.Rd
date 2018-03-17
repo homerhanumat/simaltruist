@@ -8,8 +8,8 @@ simulate(initial_pop = list(m0 = 90, m1 = 0, m2 = 10, f0 = 90, f1 = 0, f2 =
   10), average_litter_size = 5, birth_rate_natural = 0.05,
   death_rate_natural = 0, prob_attack = 0.2, warner_death_prob = 0.4,
   nonwarner_death_prob = 0.2, hider_death_prob = 0, sim_gens = 2,
-  capacity = 2000, mating_behavior = NULL, attack_behavior = NULL,
-  graph = TRUE)
+  capacity = 2000, mating_behavior = NULL, culling_behavior = NULL,
+  attack_behavior = NULL, graph = TRUE)
 }
 \arguments{
 \item{initial_pop}{List comprised of six named elements:
@@ -49,6 +49,9 @@ individual who accepts a warning.}
 \item{mating_behavior}{Custom function to govern how eligible
 partners form couples.}
 
+\item{culling_behavior}{Custom function to determine death
+probabilities of individuals at the culling stage..}
+
 \item{attack_behavior}{Custom function to govern behavior of
 warners when population is under attack.}
 
@@ -75,7 +78,8 @@ a single birth-death-attack cycle.   Variables are:
 Simulate Spread of Gene for Altruism
 }
 \note{
-For details on \code{mating_behavior} and \code{attack_behavior}
+For details on \code{mating_behavior}, \code{mating_behavior}
+and \code{attack_behavior}
 consult the
 \href{https://homerhanumat.github.io/simaltruist}{package documentation}.
 }

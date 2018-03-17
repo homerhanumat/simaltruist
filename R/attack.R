@@ -180,7 +180,7 @@ attack <- function(
 
   if (!is.null(attack_behavior)) {
     providedArgs <- makeProvidedArgs(pvd, attack_behavior$fn)
-    deathProb <- do.call(what = fn,
+    deathProb <- do.call(what = attack_behavior$fn,
                          args = c(providedArgs, attack_behavior$args))
   } else {
     deathProb <- warnRelatives(

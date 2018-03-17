@@ -192,7 +192,11 @@ reproduce <- function (pvd,
 
   ## get the pairs:
   if (!is.null(mating_behavior)) {
-    providedArgs <- makeProvidedArgs(pvd, mating_behavior$fn)
+    providedArgs <- makeProvidedArgs(c(pvd,
+                                       list(
+                                         number_of_couples = number_of_couples)
+                                       ),
+                                     mating_behavior$fn)
     couples <- do.call(what = mating_behavior$fn,
                        args = c(providedArgs, mating_behavior$args))
   } else {
@@ -204,7 +208,7 @@ reproduce <- function (pvd,
 
   momIDs <- femaleMates$id
   dadIDs <- maleMates$id
-  litterSizes <- 1 + rpois(number_of_couples, average_litter_size - 1)
+  litterSizes <- 1 + rpois(number_of_couples, pvd$average_litter_size - 1)
   totalKids <- sum(litterSizes)
   newPopSize <- nrow(pvd$individuals) + sum(litterSizes)
 

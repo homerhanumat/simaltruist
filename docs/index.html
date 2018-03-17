@@ -63,7 +63,7 @@
     
     
 <div class="contents">
-<p><br><br> The R package <strong>simaltruist</strong> provides a convenient interfacing for running simulations to explore the spread of genes for altruism in an animal population.</p>
+<p><br><br> The R package <strong>simaltruist</strong> provides a convenient interface for running simulations to explore the spread of genes for altruism in an animal population.</p>
 <div id="scenario" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scenario" class="anchor"></a>Scenario</h2>
@@ -95,12 +95,70 @@ A graph for free!
 <div id="writing-and-using-custom-functions" class="section level2">
 <h2 class="hasAnchor">
 <a href="#writing-and-using-custom-functions" class="anchor"></a>Writing and Using Custom Functions</h2>
-<p>The <code><a href="reference/simulate.html">simulate()</a></code> function provides for a certain amount of customization of two important phases in the simulation of a single generation:</p>
+<p>The <code><a href="reference/simulate.html">simulate()</a></code> function provides for a extensive customization of three important phases in the simulation of a single generation:</p>
 <ul>
 <li>the way in which mating couples are formed;</li>
+<li>the chance of death (by cause other than predator attack) in a “culling”;</li>
 <li>how warners behave when the population is under attack by a predator.</li>
 </ul>
-<p>Both of these behaviors may be controlled and programmed by the user, by means of the parameters <code>mating_behavior</code> and <code>attack_behavior</code>.</p>
+<p>Both of these behaviors may be controlled and programmed by the user, by means of the parameters <code>mating_behavior</code>, <code>culling_behavior</code> and <code>attack_behavior</code>.</p>
+<p>All custom functions have the following values provided by the <code><a href="reference/simulate.html">simulate()</a></code> program, provided that appear as named parameters in definition of the function:</p>
+<ul>
+<li>
+<code>individuals</code>: a data frame that is computed at the beginning of each generation. Each row represents a living member of the population. The columns are:
+<ul>
+<li>
+<code>id</code>: a string giving the ID-number of the individual;</li>
+<li>
+<code>sex</code>: the sex of the individual;</li>
+<li>
+<code>warner</code>: a numerical variable with values 0, 1, or 2, giving the number of altruistic alleles the individual possesses.</li>
+<li>
+<code>mom</code>: a string giving the ID-number of the individual’s mother;</li>
+<li>
+<code>dad</code>: a string giving the ID-number of the individual’s mother.</li>
+</ul>
+</li>
+<li>
+<code>population</code>: a data frame on the population at each generation up to the current one. Columns are:
+<ul>
+<li>
+<code>populationSize</code>;</li>
+<li>
+<code>males</code>: total number of males in the current generation;</li>
+<li>
+<code>males0</code>: number of males with 0 altruist alleles;</li>
+<li>
+<code>males1</code>: number of males with 1 altruist allele;</li>
+<li>
+<code>males2</code>: number of males with 2 altruist alleles;</li>
+<li>
+<code>females</code>: total number of females in the current generation;</li>
+<li>
+<code>females0</code>: number of females with 0 altruist alleles;</li>
+<li>
+<code>females1</code>: number of females with 1 altruist allele;</li>
+<li>
+<code>females2</code>: number of females with 2 altruist alleles</li>
+</ul>
+</li>
+<li>
+<code>relMatrix</code>: a matrix with row and columns names corresponding to the ID-numbers of all living individuals. The cells give the degree of relationship between any given pair of individuals.</li>
+<li>
+<code>current_gen</code>: the current generation (starts with 1);</li>
+<li>all of the following values already passed into the <code><a href="reference/simulate.html">simulate()</a></code> function:
+<ul>
+<li><code>average_litter_size</code></li>
+<li><code>birth_rate_natural</code></li>
+<li><code>death_rate_natural</code></li>
+<li><code>prob_attack</code></li>
+<li><code>warner_death_prob</code></li>
+<li><code>nonwarner_death_prob</code></li>
+<li><code>hider_death_prob</code></li>
+<li><code>capacity</code></li>
+</ul>
+</li>
+</ul>
 <div id="mating-behavior" class="section level3">
 <h3 class="hasAnchor">
 <a href="#mating-behavior" class="anchor"></a>Mating Behavior</h3>
@@ -119,20 +177,8 @@ A graph for free!
   <span class="kw">list</span>(<span class="dt">females =</span> breedingFemales, <span class="dt">males =</span> chosenMales)
 }</code></pre></div>
 <p>As the code shows, the default behavior is for fertile females to select randomly from the set of males.</p>
-<p>As for the arguments, <code>individuals</code> is a data frame that is computed at the beginning of each generation. Each row represents a living member of the population. The columns are:</p>
-<ul>
-<li>
-<code>id</code>: a string giving the ID-number of the individual;</li>
-<li>
-<code>sex</code>: the sex of the individual;</li>
-<li>
-<code>warner</code>: a numerical variable with values 0, 1, or 2, giving the number of altruistic alleles the individual possesses.</li>
-<li>
-<code>mom</code>: a string giving the ID-number of the individual’s mother;</li>
-<li>
-<code>dad</code>: a string giving the ID-number of the individual’s mother.</li>
-</ul>
-<p>It is possible to write one’s own mating function and pass it to <code><a href="reference/simulate.html">simulate()</a></code> via the <code>mating_behavior</code> parameter. An example of such a custom function is exported by <strong>simaltruist</strong> as <code><a href="reference/sexualSelection.html">sexualSelection()</a></code>, the source code for which maybe be viewed <a href="https://github.com/homerhanumat/simaltruist/blob/master/R/reproduce.R">here</a>.</p>
+<p>It is possible to write one’s own mating function and pass it to <code><a href="reference/simulate.html">simulate()</a></code> via the <code>mating_behavior</code> parameter. Such a function has access to all of the values listed above, as well as <code>number_of_couples</code>, the number of couples that should form in the current generation in order to satisfy the required birth rate.</p>
+<p>An example of such a custom function is exported by <strong>simaltruist</strong> as <code><a href="reference/sexualSelection.html">sexualSelection()</a></code>, the source code for which maybe be viewed <a href="https://github.com/homerhanumat/simaltruist/blob/master/R/reproduce.R">here</a>.</p>
 <p>The formal parameters of the function are shown in the definition below:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sexualSelection &lt;-<span class="st"> </span><span class="cf">function</span>(
   individuals,
@@ -186,15 +232,7 @@ Sexual selection: opposites attract!
 </table>
 <p>We see that 0-allele females prefer 1-allele and 2-allele males. In fact when presented with three males, one of each genotype, she is five times as likely to prefer the 1-allele male over the 0-allele male, and ten times as likely to prefer the 2-allele male over the 0-allele male. Zero-allele females have a reverse preference, and single-allele females are indifferent in their choice.</p>
 <p>Note that <code>args</code> specifies only the value of the <code>prefs</code> parameter of <code>sexualSelection</code>. The other two parameters of this function—<code>individuals</code> and <code>number_of_couples</code> are computed by <code><a href="reference/simulate.html">simulate()</a></code> and provided to <code><a href="reference/sexualSelection.html">sexualSelection()</a></code> when it is called.</p>
-<p>For custom mating functions the possible provided parameters are:</p>
-<ul>
-<li>
-<code>individuals</code>, the data frame described above;</li>
-<li><code>number_of_couples</code></li>
-<li>
-<code>relMatrix</code>, a matrix (described below) of relationship-degree between living individuals.</li>
-</ul>
-<p>Note that a custom mating function must return a named list containing two elements:</p>
+<p>Note also that a custom mating function must return a named list containing two elements:</p>
 <ul>
 <li>
 <code>females</code>: a character vector consisting of the id numbers of female mates;</li>
@@ -203,10 +241,36 @@ Sexual selection: opposites attract!
 </ul>
 <p>Corresponding elements of the two vectors represent a single couple.</p>
 </div>
+<div id="culling-behavior" class="section level3">
+<h3 class="hasAnchor">
+<a href="#culling-behavior" class="anchor"></a>Culling Behavior</h3>
+<p>In any generation there is a culling phase that represents death by all causes other than a mass attack on the colony by predators. The death-rate for this phase is computed as a linear function of population-size that is equal to <code>death_rate_natrual</code> when the population is zero and is equal to <code>birth_rate_natural</code> when the population is at capacity.</p>
+<p>The default culling function assigns this computed death-rate <code>dr</code> as the probability of death for each individual in the population during the culling phase.</p>
+<p>Custom culling functions may be written. As with custom mating functions have access to all values in the list above, but they also have access to <code>dr</code>. An example of a custom culling function is as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">weakWarners &lt;-<span class="st"> </span><span class="cf">function</span>(individuals, dr) {
+  warner &lt;-<span class="st"> </span>individuals<span class="op">$</span>warner
+  deathProb &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">length</span>(warner))
+  deathProb[warner <span class="op">==</span><span class="st"> </span><span class="dv">0</span>] &lt;-<span class="st"> </span>dr
+  deathProb[warner <span class="op">==</span><span class="st"> </span><span class="dv">1</span>] &lt;-<span class="st"> </span>dr <span class="op">*</span><span class="st"> </span><span class="dv">2</span>
+  deathProb[warner <span class="op">==</span><span class="st"> </span><span class="dv">2</span>] &lt;-<span class="st"> </span>dr <span class="op">*</span><span class="st"> </span><span class="dv">5</span>
+  deathProb
+}</code></pre></div>
+<p>This function gives warners a much higher chance of death during the culling phase. (Perhaps they expend a lot of energy patrolling for predators.)</p>
+<p>An example of use of this function is as follows. It assumes a scenario in which there are no predator attacks.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="reference/simulate.html">simulate</a></span>(<span class="dt">sim_gens =</span> <span class="dv">200</span>, <span class="dt">prob_attack =</span> <span class="dv">0</span>,
+                <span class="dt">culling_behavior =</span> <span class="kw">list</span>(<span class="dt">fn =</span> weakWarners,
+                                        <span class="dt">args =</span> <span class="kw">list</span>()))</code></pre></div>
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-10-1.png" alt="Weak wanrners go extinct!" width="90%"><p class="caption">
+Weak wanrners go extinct!
+</p>
+</div>
+<p>Note that <code>weakWarners()</code> has no arguments beyond those whose values are provided by the <code><a href="reference/simulate.html">simulate()</a></code> function, so we set <code>args</code> to the empty list.</p>
+</div>
 <div id="attack-behavior" class="section level3">
 <h3 class="hasAnchor">
 <a href="#attack-behavior" class="anchor"></a>Attack Behavior</h3>
-<p>By default the behavior of a warner when the population is under attack is governed by the function <code><a href="reference/warnRelatives.html">warnRelatives()</a></code>, described in the package documentation. Again it is possible for the user to pass in a modified version of this function or an entirely new function, via the parameter <code>attack_behavior</code>.</p>
+<p>By default the behavior of a warner when the population is under attack is governed by the function <code><a href="reference/warnRelatives.html">warnRelatives()</a></code>, described in the package documentation. Again it is possible for the user to pass in a modified version of this function or an entirely new function, via the parameter <code>attack_behavior</code>. A custom attack function has access to any values in the list above, provided that the value appears as a parameter in the definition of the function.</p>
 <p>An example of an alternative attack-behavior function is the exported function <a href="https://github.com/homerhanumat/simaltruist/blob/master/R/attack.R"><code><a href="reference/warnWarners.html">warnWarners()</a></code></a>, in which each warner warns only other warners, without regard to their relationship to him or her:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pop &lt;-<span class="st"> </span><span class="kw"><a href="reference/simulate.html">simulate</a></span>(<span class="dt">sim_gens =</span> <span class="dv">100</span>,
                 <span class="dt">attack_behavior =</span> <span class="kw">list</span>(
@@ -214,21 +278,12 @@ Sexual selection: opposites attract!
                   <span class="dt">args =</span> <span class="kw">list</span>(
                     <span class="dt">number_warned =</span> <span class="dv">7</span>,
                     <span class="dt">dominant =</span> <span class="ot">TRUE</span>)))</code></pre></div>
-<p><img src="index_files/figure-html/fig-1.png" width="90%" style="display: block; margin: auto;"></p>
-<p>Again it is only necessary to set the values of parameters that are not automatically provided by the <code><a href="reference/simulate.html">simulate()</a></code> function. Provided values are as follows:</p>
-<ul>
-<li>
-<code>individuals</code>, described previously;</li>
-<li>three parameters provided to <code><a href="reference/simulate.html">simulate()</a></code>:
-<ul>
-<li><code>warner_death_prob</code></li>
-<li><code>nonwarner_death_prob</code></li>
-<li><code>hider_death_prob</code></li>
-</ul>
-</li>
-<li>
-<code>relMatrix</code>, a matrix with row and columns names corresponding to the ID-numbers of all living individuals. The cells give the degree of relationship between any given pair of individuals.</li>
-</ul>
+<div class="figure" style="text-align: center">
+<img src="index_files/figure-html/unnamed-chunk-11-1.png" alt="Here, each 2-allele warner can warn up to seven warners." width="90%"><p class="caption">
+Here, each 2-allele warner can warn up to seven warners.
+</p>
+</div>
+<p>Again it is only necessary to set the values of parameters that are not automatically provided by the <code><a href="reference/simulate.html">simulate()</a></code> function.</p>
 <p>Note that a custom attack function must return a numerical vector of death probabilities, with the <span class="math inline">\(i^{\text{th}}\)</span> element corresponding to row <span class="math inline">\(i\)</span> of <code>individuals</code>.</p>
 </div>
 </div>

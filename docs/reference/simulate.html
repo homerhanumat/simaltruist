@@ -87,37 +87,30 @@
     <p>Simulate Spread of Gene for Altruism</p>
     
 
-    <pre class="usage"><span class='fu'>simulate</span>(<span class='kw'>average_litter_size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>initial_males</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>initial_alt_males</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>initial_females</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>initial_alt_females</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>birth_rate_natural</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>death_rate_natural</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>prob_attack</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>warner_death_prob</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>nonwarner_death_prob</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>hider_death_prob</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>sim_gens</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>capacity</span> <span class='kw'>=</span> <span class='fl'>2000</span>,
-  <span class='kw'>mating_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>attack_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>graph</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>simulate</span>(<span class='kw'>initial_pop</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>m0</span> <span class='kw'>=</span> <span class='fl'>90</span>, <span class='kw'>m1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>m2</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>f0</span> <span class='kw'>=</span> <span class='fl'>90</span>, <span class='kw'>f1</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>f2</span> <span class='kw'>=</span>
+  <span class='fl'>10</span>), <span class='kw'>average_litter_size</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>birth_rate_natural</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>death_rate_natural</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>prob_attack</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>warner_death_prob</span> <span class='kw'>=</span> <span class='fl'>0.4</span>,
+  <span class='kw'>nonwarner_death_prob</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>hider_death_prob</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>sim_gens</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>capacity</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>mating_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>culling_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>attack_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>graph</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>initial_pop</th>
+      <td><p>List comprised of six named elements:</p><dl class='dl-horizontal'>
+  <dt>m0</dt><dd><p>initial number of males with 0 altruist alleles;</p></dd>
+  <dt>m1</dt><dd><p>initial number of males with 1 altruist allele;</p></dd>
+  <dt>m2</dt><dd><p>initial number of males with 2 altruist alleles;</p></dd>
+  <dt>f0</dt><dd><p>initial number of females with 0 altruist alleles;</p></dd>
+  <dt>f1</dt><dd><p>initial number of females with 1 altruist allele;</p></dd>
+  <dt>f2</dt><dd><p>initial number of females with 2 altruist alleles.</p></dd>
+</dl></td>
+    </tr>
+    <tr>
       <th>average_litter_size</th>
       <td><p>Mean size of a litter.</p></td>
-    </tr>
-    <tr>
-      <th>initial_males</th>
-      <td><p>Number of males in initial population.</p></td>
-    </tr>
-    <tr>
-      <th>initial_alt_males</th>
-      <td><p>Number of males in initial population with
-two alleles for altruism (all other initial males have 0 such alleles).</p></td>
-    </tr>
-    <tr>
-      <th>initial_females</th>
-      <td><p>Number of females in initial population.</p></td>
-    </tr>
-    <tr>
-      <th>initial_alt_females</th>
-      <td><p>Number of females in initial population with
-two alleles for altruism (all other initial females have 0 such alleles).</p></td>
     </tr>
     <tr>
       <th>birth_rate_natural</th>
@@ -163,6 +156,11 @@ individual who accepts a warning.</p></td>
 partners form couples.</p></td>
     </tr>
     <tr>
+      <th>culling_behavior</th>
+      <td><p>Custom function to determine death
+probabilities of individuals at the culling stage..</p></td>
+    </tr>
+    <tr>
       <th>attack_behavior</th>
       <td><p>Custom function to govern behavior of
 warners when population is under attack.</p></td>
@@ -193,7 +191,8 @@ a single birth-death-attack cycle.   Variables are:</p><dl class='dl-horizontal'
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>For details on <code>mating_behavior</code> and <code>attack_behavior</code>
+    <p>For details on <code>mating_behavior</code>, <code>mating_behavior</code>
+and <code>attack_behavior</code>
 consult the
 <a href='https://homerhanumat.github.io/simaltruist'>package documentation</a>.</p>
     
