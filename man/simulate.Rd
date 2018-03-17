@@ -4,25 +4,25 @@
 \alias{simulate}
 \title{Simulate Spread of Gene for Altruism}
 \usage{
-simulate(average_litter_size = 5, initial_males = 100,
-  initial_alt_males = 10, initial_females = 100, initial_alt_females = 10,
-  birth_rate_natural = 0.05, death_rate_natural = 0, prob_attack = 0.2,
-  warner_death_prob = 0.4, nonwarner_death_prob = 0.2,
-  hider_death_prob = 0, sim_gens = 2, capacity = 2000,
-  mating_behavior = NULL, attack_behavior = NULL, graph = TRUE)
+simulate(initial_pop = list(m0 = 90, m1 = 0, m2 = 10, f0 = 90, f1 = 0, f2 =
+  10), average_litter_size = 5, birth_rate_natural = 0.05,
+  death_rate_natural = 0, prob_attack = 0.2, warner_death_prob = 0.4,
+  nonwarner_death_prob = 0.2, hider_death_prob = 0, sim_gens = 2,
+  capacity = 2000, mating_behavior = NULL, attack_behavior = NULL,
+  graph = TRUE)
 }
 \arguments{
+\item{initial_pop}{List comprised of six named elements:
+\describe{
+  \item{m0}{initial number of males with 0 altruist alleles;}
+  \item{m1}{initial number of males with 1 altruist allele;}
+  \item{m2}{initial number of males with 2 altruist alleles;}
+  \item{f0}{initial number of females with 0 altruist alleles;}
+  \item{f1}{initial number of females with 1 altruist allele;}
+  \item{f2}{initial number of females with 2 altruist alleles.}
+}}
+
 \item{average_litter_size}{Mean size of a litter.}
-
-\item{initial_males}{Number of males in initial population.}
-
-\item{initial_alt_males}{Number of males in initial population with
-two alleles for altruism (all other initial males have 0 such alleles).}
-
-\item{initial_females}{Number of females in initial population.}
-
-\item{initial_alt_females}{Number of females in initial population with
-two alleles for altruism (all other initial females have 0 such alleles).}
 
 \item{birth_rate_natural}{Birth rate for the population.}
 

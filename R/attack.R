@@ -175,46 +175,31 @@ determineAttackDeath <- function(deathProb) {
 ## attack ---------------
 
 attack <- function(
-  individuals,
-  warner_death_prob,
-  nonwarner_death_prob,
-  hider_death_prob,
-  attack_behavior,
-  relMatrix) {
+  pvd,
+  attack_behavior) {
 
   if (!is.null(attack_behavior)) {
-    fn <- attack_behavior$fn
-    vars <- names(formals(fn))
-    provideable <- c("individuals",
-                     "warner_death_prob",
-                     "nonwarner_death_prob",
-                     "hider_death_prob",
-                     "relMatrix")
-    neededVars <- intersect(vars, provideable)
-    providedArgs <- list()
-    for (var in neededVars) {
-      providedArgs[[var]] <- get(var)
-    }
+    providedArgs <- makeProvidedArgs(pvd, attack_behavior$fn)
     deathProb <- do.call(what = fn,
                          args = c(providedArgs, attack_behavior$args))
   } else {
     deathProb <- warnRelatives(
-      individuals,
+      pvd$individuals,
       number_warned = 10,
-      warner_death_prob,
-      nonwarner_death_prob,
-      hider_death_prob,
+      pvd$warner_death_prob,
+      pvd$nonwarner_death_prob,
+      pvd$hider_death_prob,
       warnable_relationship = 0.25,
-      relMatrix,
+      pvd$relMatrix,
       dominant = FALSE
     )
   }
 
   dies <- determineAttackDeath(deathProb)
-  dead <- subset(individuals, dies)
-  survivors <- subset(individuals, !dies)
+  dead <- subset(pvd$individuals, dies)
+  survivors <- subset(pvd$individuals, !dies)
   popAdjustment <- -popAdjust(dead$sex, dead$warner)
-  relMatrix <- cutForDeaths(relMatrix, individuals$id, dies)
+  relMatrix <- cutForDeaths(pvd$relMatrix, pvd$individuals$id, dies)
   list(
     individuals = survivors,
     relMatrix = relMatrix,

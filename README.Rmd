@@ -11,7 +11,7 @@ knitr::opts_chunk$set(out.width = "90%", fig.align = "center")
 ```
 
 <br><br>
-The R package **simaltruist** provides a convenient interfacing for running simulations to explore the spread of genes for altruism in an animal population.
+The R package **simaltruist** provides a convenient interface for running simulations to explore the spread of genes for altruism in an animal population.
 
 ## Scenario
 

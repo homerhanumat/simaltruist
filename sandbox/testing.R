@@ -22,3 +22,7 @@ pop <- simulate(sim_gens = 100,
                   args = list(
                     number_warned = 7,
                     dominant = TRUE)))
+pop <- simulate(sim_gens = 400,
+                initial_pop = list(m0 = 80, m1 = 10, m2 = 10,
+                                   f0 = 80, f1 = 10, f2 = 10),
+                warner_death_prob = 0.5)

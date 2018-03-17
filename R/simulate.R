@@ -1,12 +1,15 @@
 #' Simulate Spread of Gene for Altruism
 #'
+#' @param initial_pop List comprised of six named elements:
+#' \describe{
+#'   \item{m0}{initial number of males with 0 altruist alleles;}
+#'   \item{m1}{initial number of males with 1 altruist allele;}
+#'   \item{m2}{initial number of males with 2 altruist alleles;}
+#'   \item{f0}{initial number of females with 0 altruist alleles;}
+#'   \item{f1}{initial number of females with 1 altruist allele;}
+#'   \item{f2}{initial number of females with 2 altruist alleles.}
+#' }
 #' @param average_litter_size Mean size of a litter.
-#' @param initial_males Number of males in initial population.
-#' @param initial_alt_males Number of males in initial population with
-#' two alleles for altruism (all other initial males have 0 such alleles).
-#' @param initial_females Number of females in initial population.
-#' @param initial_alt_females Number of females in initial population with
-#' two alleles for altruism (all other initial females have 0 such alleles).
 #' @param birth_rate_natural Birth rate for the population.
 #' @param death_rate_natural Death rate for a size-zero population. Rises
 #' linearly to \code{birth_rate_natrual} as populaiion approaches
@@ -64,70 +67,87 @@
 #'                       ncol = 3))))
 #' }
 #' @export
-simulate<- function(average_litter_size = 5,
-                   initial_males = 100,
-                   initial_alt_males = 10,
-                   initial_females = 100,
-                   initial_alt_females = 10,
-                   birth_rate_natural = .05,
-                   death_rate_natural = .0,
-                   prob_attack = .2,
-                   warner_death_prob = .4,
-                   nonwarner_death_prob = .2,
-                   hider_death_prob = 0,
-                   sim_gens = 2,
-                   capacity = 2000,
-                   mating_behavior = NULL,
-                   attack_behavior = NULL,
-                   graph = TRUE) {
+simulate <- function(
+                     initial_pop = list(
+                       m0 = 90, m1 = 0, m2 = 10,
+                       f0 = 90, f1 = 0, f2 = 10
+                     ),
+                     average_litter_size = 5,
+                     birth_rate_natural = .05,
+                     death_rate_natural = .0,
+                     prob_attack = .2,
+                     warner_death_prob = .4,
+                     nonwarner_death_prob = .2,
+                     hider_death_prob = 0,
+                     sim_gens = 2,
+                     capacity = 2000,
+                     mating_behavior = NULL,
+                     attack_behavior = NULL,
+                     graph = TRUE) {
 
   individuals <- individualInit(
-    initial_males = initial_males,
-    initial_alt_males = initial_alt_males,
-    initial_females = initial_females,
-    initial_alt_females = initial_alt_females
-    )
+    initial_pop = initial_pop
+  )
   maxId <- max(as.numeric(individuals$id))
   population <- popInit(individuals, sim_gens)
   relMatrix <- relMatrixInit(individuals)
+  # provideable variables:
+  pvd <- list(
+    individuals = max(as.numeric(individuals$id)),
+    population = popInit(individuals, sim_gens),
+    relMatrix = relMatrixInit(individuals),
+    average_litter_size = average_litter_size,
+    birth_rate_natural = birth_rate_natural,
+    death_rate_natural = death_rate_natural,
+    prob_attack = prob_attack,
+    warner_death_prob = warner_death_prob,
+    nonwarner_death_prob = nonwarner_death_prob,
+    hider_death_prob = hider_death_prob,
+    current_gen = 0,
+    capacity = capacity
+  )
 
   # go through the generations
   for (i in 1:sim_gens) {
-
+    pvd$current_gen <- i
     ## reproduce:
-    if (population$males[i] > 0 & population$females[i] > 0) {
+    if (pvd$population$males[i] > 0 & pvd$population$females[i] > 0) {
       # compute number of couples
-      targetChildren <- birth_rate_natural * nrow(individuals)
+      targetChildren <- birth_rate_natural * nrow(pvd$individuals)
       number_of_couples <- ceiling(targetChildren / average_litter_size)
       # make the new generation:
-      lst <- reproduce(average_litter_size = average_litter_size,
-                       number_of_couples = number_of_couples,
-                       individuals = individuals,
-                       relMatrix = relMatrix,
-                       mating_behavior = mating_behavior,
-                       maxId = maxId)
-      individuals <- lst$individuals
-      relMatrix <- lst$relMatrix
+      lst <- reproduce(
+        pvd = pvd,
+        number_of_couples = number_of_couples,
+        mating_behavior = mating_behavior,
+        maxId = maxId
+      )
+      pvd$individuals <- lst$individuals
+      pvd$relMatrix <- lst$relMatrix
       popAdjustment <- lst$popAdjustment
       maxId <- lst$maxId
-      population[i + 1, ] <- colSums(rbind(population[i, ], popAdjustment))
+      pvd$population[i + 1, ] <- colSums(rbind(pvd$population[i, ], popAdjustment))
     } else {
-      population[i + 1, ] <- population[i, ]
+      pvd$population[i + 1, ] <- pvd$population[i, ]
     }
 
     ## cull
-    #compute death rate
-    dr <- getDeathRate(popSize = population[i + 1, 1],
-                    capacity = capacity,
-                    death_rate_natural = death_rate_natural,
-                    birth_rate_natural = birth_rate_natural)
-    lst <- cull(dr = dr,
-                individuals = individuals,
-                relMatrix = relMatrix)
-    individuals <- lst$individuals
-    relMatrix <- lst$relMatrix
+    # compute death rate
+    dr <- getDeathRate(
+      popSize = pvd$population[i + 1, 1],
+      capacity = capacity,
+      death_rate_natural = death_rate_natural,
+      birth_rate_natural = birth_rate_natural
+    )
+    lst <- cull(
+      dr = dr,
+      individuals = pvd$individuals,
+      relMatrix = pvd$relMatrix
+    )
+    pvd$individuals <- lst$individuals
+    pvd$relMatrix <- lst$relMatrix
     popAdjustment <- lst$popAdjustment
-    population[i + 1, ] <- colSums(rbind(population[i + 1, ], popAdjustment))
+    pvd$population[i + 1, ] <- colSums(rbind(pvd$population[i + 1, ], popAdjustment))
 
 
     ## will there be an attack?
@@ -135,28 +155,27 @@ simulate<- function(average_litter_size = 5,
     # handle attack, if needed:
     if (attackOccurs) {
       lst <- attack(
-        individuals = individuals,
-        warner_death_prob = warner_death_prob,
-        nonwarner_death_prob = nonwarner_death_prob,
-        hider_death_prob = hider_death_prob,
-        attack_behavior = attack_behavior,
-        relMatrix = relMatrix)
-      individuals <- lst$individuals
-      relMatrix <- lst$relMatrix
+        pvd = pvd,
+        attack_behavior = attack_behavior
+      )
+      pvd$individuals <- lst$individuals
+      pvd$relMatrix <- lst$relMatrix
       popAdjustment <- lst$popAdjustment
-      population[i + 1, ] <- colSums(rbind(population[i + 1, ], popAdjustment))
+      pvd$population[i + 1, ] <- colSums(rbind(pvd$population[i + 1, ], popAdjustment))
     }
+    if (pvd$population$populationSize[i + 1] == 0) break
   }
   if (graph) {
     altProp <- with(
-      population,
-      (2*(males2 + females2) + males1 + females1)/(males + females))
-    generation <- 0:sim_gens
+      pvd$population,
+      (2 * (males2 + females2) + males1 + females1) / (males + females)
+    )
+    generation <- 0:nrow(pvd$population)
     df <- data.frame(generation, altProp)
     p <-
       ggplot(df, aes(x = generation, y = altProp)) +
       geom_line()
     print(p)
   }
-  return(population)
+  return(pvd$population)
 }

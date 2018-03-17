@@ -180,10 +180,8 @@ makeLitter <- function(mom, dad, actualsize, lastId) {
   litter
 }
 
-reproduce <- function (average_litter_size,
+reproduce <- function (pvd,
                        number_of_couples,
-                       individuals,
-                       relMatrix = NULL,
                        mating_behavior,
                        maxId) {
 
@@ -194,20 +192,11 @@ reproduce <- function (average_litter_size,
 
   ## get the pairs:
   if (!is.null(mating_behavior)) {
-    fn <- mating_behavior$fn
-    vars <- names(formals(fn))
-    provideable <- c("individuals",
-                     "number_of_couples",
-                     "relMatrix")
-    neededVars <- intersect(vars, provideable)
-    providedArgs <- list()
-    for (var in neededVars) {
-      providedArgs[[var]] <- get(var)
-    }
-    couples <- do.call(what = fn,
-                         args = c(providedArgs, mating_behavior$args))
+    providedArgs <- makeProvidedArgs(pvd, mating_behavior$fn)
+    couples <- do.call(what = mating_behavior$fn,
+                       args = c(providedArgs, mating_behavior$args))
   } else {
-    couples <- randomMatches(individuals, number_of_couples)
+    couples <- randomMatches(pvd$individuals, number_of_couples)
   }
 
   femaleMates <- couples$females
@@ -217,7 +206,7 @@ reproduce <- function (average_litter_size,
   dadIDs <- maleMates$id
   litterSizes <- 1 + rpois(number_of_couples, average_litter_size - 1)
   totalKids <- sum(litterSizes)
-  newPopSize <- nrow(individuals) + sum(litterSizes)
+  newPopSize <- nrow(pvd$individuals) + sum(litterSizes)
 
   # prepare a new individuals data frame:
   extIndividuals <- data.frame(
@@ -228,24 +217,24 @@ reproduce <- function (average_litter_size,
     dad = character(newPopSize),
     stringsAsFactors = FALSE
   )
-  extIndividuals[1:nrow(individuals), ] <- individuals
+  extIndividuals[1:nrow(pvd$individuals), ] <- pvd$individuals
 
   # prepare a new relationship matrix:
-  newRelMatSize <- nrow(individuals) + totalKids
+  newRelMatSize <- nrow(pvd$individuals) + totalKids
   extRelMat <- matrix(0, nrow = newRelMatSize, ncol = newRelMatSize)
-  extRelMat[1:nrow(individuals), 1:nrow(individuals)] <- relMatrix
+  extRelMat[1:nrow(pvd$individuals), 1:nrow(pvd$individuals)] <- pvd$relMatrix
   rcNames <- c(
-    rownames(relMatrix),
+    rownames(pvd$relMatrix),
     as.character((maxId + 1):(maxId + totalKids))
     )
   rownames(extRelMat) <- rcNames
   colnames(extRelMat) <- rcNames
 
   # prepare for loop:
-  m <- nrow(individuals)
+  m <- nrow(pvd$individuals)
   lastId <- maxId
 
-  for(i in 1:number_of_couples){
+  for (i in 1:number_of_couples) {
 
     ## get the next litter:
     n <- litterSizes[i]

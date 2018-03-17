@@ -1,21 +1,25 @@
 ## miscellaneous
 if(getRversion() >= "2.15.1") utils::globalVariables(c("sex", "warner"))
 
-individualInit <- function(initial_males = 100,
-                           initial_alt_males = 10,
-                           initial_females = 100,
-                           initial_alt_females = 10) {
-
-  initSize <- initial_males + initial_females
+individualInit <- function(initial_pop) {
+  m0 <- initial_pop$m0
+  m1 <- initial_pop$m1
+  m2 <- initial_pop$m2
+  f0 <- initial_pop$f0
+  f1 <- initial_pop$f1
+  f2 <- initial_pop$f2
+  initSize <- m0 + m1 + m2 + f0 + f1 + f2
   id <- as.character(1:initSize)
-  sex <- c(rep("F", times = initial_females),
-           rep("M", times = initial_males))
-  warner <- c(rep(2, times = initial_alt_females),
-              rep(0, times = initial_females - initial_alt_females),
-              rep(2, times = initial_alt_males),
-              rep(0, times = initial_males - initial_alt_males))
-  mom <- rep(NA_character_, times = initial_females)
-  dad <- rep(NA_character_, times = initial_males)
+  sex <- c(rep("F", times = f0 + f1 + f2),
+           rep("M", times = m0 + m1 + m2))
+  warner <- c(rep(0, times = f0),
+              rep(1, times = f1),
+              rep(2, times = f2),
+              rep(0, times = m0),
+              rep(1, times = m1),
+              rep(2, times = m2))
+  mom <- rep(NA_character_, times = f0 + f1 + f2)
+  dad <- rep(NA_character_, times = m0 + m1 + m2)
   data.frame(id, sex, warner, mom, dad, stringsAsFactors = FALSE)
 
 }
@@ -79,4 +83,17 @@ popAdjust <- function(sex, warner) {
   data.frame(populationSize,
              males, males0, males1, males2,
              females, females0, females1, females2)
+}
+
+# compute list of provided arguments for
+# mating, attack and cull custom functions
+makeProvidedArgs <- function(pvd, fn) {
+  vars <- names(formals(fn))
+  provideable <- names(pvd)
+  neededVars <- intersect(vars, provideable)
+  providedArgs <- list()
+  for (var in neededVars) {
+    providedArgs[[var]] <- get(var, pos = pvd)
+  }
+  providedArgs
 }
