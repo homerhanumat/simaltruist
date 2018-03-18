@@ -97,6 +97,7 @@ simulate <- function(
   individuals = individualInit(
     initial_pop = initial_pop
   )
+  relationship_method <- match.arg(relationship_method)
   # provideable variables:
   pvd <- list(
     individuals = individuals,
