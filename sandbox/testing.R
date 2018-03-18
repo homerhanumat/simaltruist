@@ -41,3 +41,22 @@ pop <- simulate(sim_gens = 200,
 pop <- simulate(sim_gens = 200, prob_attack = 0,
                 culling_behavior = list(fn = weakWarners,
                                         args = list()))
+
+## graph method
+pop <- simulate(sim_gens = 400,
+                relationship_method = "graph")
+pop <- simulate(sim_gens = 400,
+                initial_pop = list(
+                  m0 = 50, m1 = 0, m2 = 50,
+                  f0 = 50, f1 = 0, f2 = 50
+                ),
+                relationship_method = "graph")
+pop <- simulate(sim_gens = 400,
+                relationship_method = "none",
+                attack_behavior = list(
+                  fn = warnWarners,
+                  args = list(
+                    number_warned = 10,
+                    dominant = TRUE
+                  )
+                ))

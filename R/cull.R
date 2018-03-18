@@ -1,6 +1,6 @@
 ## function to kill off some individuals
 
-cull <- function(pvd, dr, culling_behavior) {
+cull <- function(pvd, dr, relationship_method, culling_behavior) {
   if (!is.null(culling_behavior)) {
     providedArgs <- makeProvidedArgs(c(pvd, list(dr = dr)),
                                      culling_behavior$fn)
@@ -14,10 +14,15 @@ cull <- function(pvd, dr, culling_behavior) {
   dead <- subset(pvd$individuals, dies)
   survivors <- subset(pvd$individuals, !dies)
   popAdjustment <- -popAdjust(dead$sex, dead$warner)
-  relMatrix <- cutForDeaths(pvd$relMatrix, pvd$individuals$id, dies)
-  list(individuals = survivors,
-      relMatrix = relMatrix,
-      popAdjustment = popAdjustment)
+  results <- list(
+    individuals = survivors,
+    popAdjustment = popAdjustment
+    )
+  if (relationship_method == "matrix") {
+    relMatrix <- cutForDeaths(pvd$relMatrix, pvd$individuals$id, dies)
+    results$relMatrix <- relMatrix
+  }
+  results
 }
 
 ## cut down relationship matrix to account for culling;

@@ -18,4 +18,5 @@ reference:
     desc: "Default and custom functions to govern warner behavior under attack."
     contents:
       - warnRelatives
+      - warnRelativesGraph
       - warnWarners

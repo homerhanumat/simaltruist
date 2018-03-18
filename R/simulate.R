@@ -30,6 +30,10 @@
 #' probabilities of individuals at the culling stage..
 #' @param attack_behavior Custom function to govern behavior of
 #' warners when population is under attack.
+#' @param relationship_method One of \code{"matrix"}, \code{"graph"}
+#' and \code{"none"}. Defaults to \code{"matrix"}. Use \code{"none"}
+#' only if no relationships (other than mother and father id) need to
+#' be tracked.
 #' @param graph If \code{TRUE}, provides a graph of the total
 #' per-capita warner alleles in population over the generations.
 #' @note For details on \code{mating_behavior}, \code{mating_behavior}
@@ -87,6 +91,7 @@ simulate <- function(
                      mating_behavior = NULL,
                      culling_behavior = NULL,
                      attack_behavior = NULL,
+                     relationship_method = c("matrix", "graph", "none"),
                      graph = TRUE) {
 
   individuals = individualInit(
@@ -96,7 +101,7 @@ simulate <- function(
   pvd <- list(
     individuals = individuals,
     population = popInit(individuals, sim_gens),
-    relMatrix = relMatrixInit(individuals),
+    #relMatrix = relMatrixInit(individuals),
     average_litter_size = average_litter_size,
     birth_rate_natural = birth_rate_natural,
     death_rate_natural = death_rate_natural,
@@ -107,6 +112,11 @@ simulate <- function(
     current_gen = 0,
     capacity = capacity
   )
+  if (relationship_method == "matrix") {
+    pvd$relMatrix <- relMatrixInit(individuals)
+  } else if (relationship_method == "graph") {
+    pvd$relGraph <- relGraphInit(individuals)
+  }
   maxId <- max(as.numeric(pvd$individuals$id))
 
   # go through the generations
@@ -122,10 +132,16 @@ simulate <- function(
         pvd = pvd,
         number_of_couples = number_of_couples,
         mating_behavior = mating_behavior,
+        relationship_method = relationship_method,
         maxId = maxId
       )
       pvd$individuals <- lst$individuals
-      pvd$relMatrix <- lst$relMatrix
+      if (relationship_method == "matrix") {
+        pvd$relMatrix <- lst$relMatrix
+      } else if (relationship_method == "graph") {
+        pvd$relGraph <- lst$relGraph
+      }
+
       popAdjustment <- lst$popAdjustment
       maxId <- lst$maxId
       pvd$population[i + 1, ] <- colSums(rbind(pvd$population[i, ], popAdjustment))
@@ -144,10 +160,13 @@ simulate <- function(
     lst <- cull(
       pvd,
       dr = dr,
+      relationship_method = relationship_method,
       culling_behavior = culling_behavior
     )
     pvd$individuals <- lst$individuals
-    pvd$relMatrix <- lst$relMatrix
+    if (relationship_method == "matrix") {
+      pvd$relMatrix <- lst$relMatrix
+    }
     popAdjustment <- lst$popAdjustment
     pvd$population[i + 1, ] <- colSums(rbind(pvd$population[i + 1, ], popAdjustment))
 
@@ -158,10 +177,13 @@ simulate <- function(
     if (attackOccurs) {
       lst <- attack(
         pvd = pvd,
+        relationship_method = relationship_method,
         attack_behavior = attack_behavior
       )
       pvd$individuals <- lst$individuals
-      pvd$relMatrix <- lst$relMatrix
+      if (relationship_method == "matrix") {
+        pvd$relMatrix <- lst$relMatrix
+      }
       popAdjustment <- lst$popAdjustment
       pvd$population[i + 1, ] <- colSums(rbind(pvd$population[i + 1, ], popAdjustment))
     }

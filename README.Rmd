@@ -210,6 +210,24 @@ pop <- simulate(sim_gens = 100,
 Again it is only necessary to set the values of parameters that are not automatically provided by the `simulate()` function.
 
 Note that a custom attack function must return a numerical vector of death probabilities, with the $i^{\text{th}}$ element corresponding to row $i$ of `individuals`.
+
+## Representation of Relationship
+
+By default the `simulate()` function creates and updates `relMatrix`, a matrix with rows and column names identical to the Ids of living individuals.  Thus---for example---both `relMatrix["123","17"]` and `relMatrix["123","17"]` would give the degree of relationship between individual 123 and individual 17.  When an individual is born it is introduced to the matrix.  Its degree of relationship with itself is set to 1, and the degree of relationship to any sibling is set to 0.5.  The degree of relationship to any other individual $I$ is:
+
+$$\frac{\texttt{relMatrix[mother, I]} + \texttt{relMatrix[mother, I]}}{2}.$$
+
+If the parameter `relationship_method` is set to `"graph"` then the `simulate()` function creates and updates `relGraph`, a family tree for the population in the form of a directed graph with edges from individuals to each of their children.  The vertices are numbered according to the Id of each individual.  Unlike `relMatrix`, `relGraph` keeps on growing, since individuals aren't removed when they die.  The default behavior of warners under attack is governed by `warnRelativesGraph()`, in which warners tip off up to ten relatives, provided that the relative is also less than two edges "distant"  from the warner on the relatioship graph.  To ilustrate, in the abence of interbreeding:
+
+* the distance from an individual to its parent is 1;
+* to a half-sibling is 2;
+* to a grandparent is 2;
+* to an aunt or uncle is 3;
+* to a cousin is 4.
+
+`relGraph` replaces `relMatrix` in the set of provided variables for custom functions.
+
+When one's custom functions do not make reference to either `relMatrix` or `relGraph`, it is recommended to set `relationship_method` to `"none"` in order to speed up the simulation.
     
 
 

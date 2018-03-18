@@ -17,7 +17,8 @@ Description: For use by students and colleagues in evolutionary biology.
     an attack.
 Imports:
     dplyr,
-    ggplot2
+    ggplot2,
+    igraph
 License: MIT + file LICENSE
 URL: https://github.com/homerhanumat/simaltruist
 NeedsCompilation: no

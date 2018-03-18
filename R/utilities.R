@@ -20,8 +20,8 @@ individualInit <- function(initial_pop) {
               rep(2, times = m2))
   mom <- rep(NA_character_, times = f0 + f1 + f2)
   dad <- rep(NA_character_, times = m0 + m1 + m2)
-  data.frame(id, sex, warner, mom, dad, stringsAsFactors = FALSE)
-
+  df <- data.frame(id, sex, warner, mom, dad, stringsAsFactors = FALSE)
+  df
 }
 
 popInit <- function(individuals, generations) {
@@ -64,6 +64,10 @@ relMatrixInit <- function(individuals) {
 getDeathRate <- function(popSize, capacity,
                       death_rate_natural, birth_rate_natural) {
   (birth_rate_natural - death_rate_natural)/capacity * popSize + death_rate_natural
+}
+
+relGraphInit <- function(individuals) {
+  make_empty_graph() + vertices(individuals$id)
 }
 
 # function to adjust population after births or deaths

@@ -9,7 +9,8 @@ simulate(initial_pop = list(m0 = 90, m1 = 0, m2 = 10, f0 = 90, f1 = 0, f2 =
   death_rate_natural = 0, prob_attack = 0.2, warner_death_prob = 0.4,
   nonwarner_death_prob = 0.2, hider_death_prob = 0, sim_gens = 2,
   capacity = 2000, mating_behavior = NULL, culling_behavior = NULL,
-  attack_behavior = NULL, graph = TRUE)
+  attack_behavior = NULL, relationship_method = c("matrix", "graph",
+  "none"), graph = TRUE)
 }
 \arguments{
 \item{initial_pop}{List comprised of six named elements:
@@ -54,6 +55,11 @@ probabilities of individuals at the culling stage..}
 
 \item{attack_behavior}{Custom function to govern behavior of
 warners when population is under attack.}
+
+\item{relationship_method}{One of \code{"matrix"}, \code{"graph"}
+and \code{"none"}. Defaults to \code{"matrix"}. Use \code{"none"}
+only if no relationships (other than mother and father id) need to
+be tracked.}
 
 \item{graph}{If \code{TRUE}, provides a graph of the total
 per-capita warner alleles in population over the generations.}

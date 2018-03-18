@@ -328,6 +328,21 @@ Here, each 2-allele warner can warn up to seven warners.
 <p>Note that a custom attack function must return a numerical vector of death probabilities, with the <span class="math inline">\(i^{\text{th}}\)</span> element corresponding to row <span class="math inline">\(i\)</span> of <code>individuals</code>.</p>
 </div>
 </div>
+<div id="representation-of-relationship" class="section level2">
+<h2>Representation of Relationship</h2>
+<p>By default the <code>simulate()</code> function creates and updates <code>relMatrix</code>, a matrix with rows and column names identical to the Ids of living individuals. Thus—for example—both <code>relMatrix[&quot;123&quot;,&quot;17&quot;]</code> and <code>relMatrix[&quot;123&quot;,&quot;17&quot;]</code> would give the degree of relationship between individual 123 and individual 17. When an individual is born it is introduced to the matrix. Its degree of relationship with itself is set to 1, and the degree of relationship to any sibling is set to 0.5. The degree of relationship to any other individual <span class="math inline">\(I\)</span> is:</p>
+<p><span class="math display">\[\frac{\texttt{relMatrix[mother, I]} + \texttt{relMatrix[mother, I]}}{2}.\]</span></p>
+<p>If the parameter <code>relationship_method</code> is set to <code>&quot;graph&quot;</code> then the <code>simulate()</code> function creates and updates <code>relGraph</code>, a family tree for the population in the form of a directed graph with edges from individuals to each of their children. The vertices are numbered according to the Id of each individual. Unlike <code>relMatrix</code>, <code>relGraph</code> keeps on growing, since individuals aren’t removed when they die. The default behavior of warners under attack is governed by <code>warnRelativesGraph()</code>, in which warners tip off up to ten relatives, provided that the relative is also less than two edges “distant” from the warner on the relatioship graph. To ilustrate, in the abence of interbreeding:</p>
+<ul>
+<li>the distance from an individual to its parent is 1;</li>
+<li>to a half-sibling is 2;</li>
+<li>to a grandparent is 2;</li>
+<li>to an aunt or uncle is 3;</li>
+<li>to a cousin is 4.</li>
+</ul>
+<p><code>relGraph</code> replaces <code>relMatrix</code> in the set of provided variables for custom functions.</p>
+<p>When one’s custom functions do not make reference to either <code>relMatrix</code> or <code>relGraph</code>, it is recommended to set <code>relationship_method</code> to <code>&quot;none&quot;</code> in order to speed up the simulation.</p>
+</div>
 
 
 

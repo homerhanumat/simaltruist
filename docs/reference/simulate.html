@@ -92,7 +92,8 @@
   <span class='kw'>death_rate_natural</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>prob_attack</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>warner_death_prob</span> <span class='kw'>=</span> <span class='fl'>0.4</span>,
   <span class='kw'>nonwarner_death_prob</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>hider_death_prob</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>sim_gens</span> <span class='kw'>=</span> <span class='fl'>2</span>,
   <span class='kw'>capacity</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>mating_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>culling_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>attack_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>graph</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>attack_behavior</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>relationship_method</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"matrix"</span>, <span class='st'>"graph"</span>,
+  <span class='st'>"none"</span>), <span class='kw'>graph</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -164,6 +165,13 @@ probabilities of individuals at the culling stage..</p></td>
       <th>attack_behavior</th>
       <td><p>Custom function to govern behavior of
 warners when population is under attack.</p></td>
+    </tr>
+    <tr>
+      <th>relationship_method</th>
+      <td><p>One of <code>"matrix"</code>, <code>"graph"</code>
+and <code>"none"</code>. Defaults to <code>"matrix"</code>. Use <code>"none"</code>
+only if no relationships (other than mother and father id) need to
+be tracked.</p></td>
     </tr>
     <tr>
       <th>graph</th>

@@ -183,6 +183,7 @@ makeLitter <- function(mom, dad, actualsize, lastId) {
 reproduce <- function (pvd,
                        number_of_couples,
                        mating_behavior,
+                       relationship_method,
                        maxId) {
 
   ## To compute next row of the populaton data frame:
@@ -223,16 +224,40 @@ reproduce <- function (pvd,
   )
   extIndividuals[1:nrow(pvd$individuals), ] <- pvd$individuals
 
-  # prepare a new relationship matrix:
-  newRelMatSize <- nrow(pvd$individuals) + totalKids
-  extRelMat <- matrix(0, nrow = newRelMatSize, ncol = newRelMatSize)
-  extRelMat[1:nrow(pvd$individuals), 1:nrow(pvd$individuals)] <- pvd$relMatrix
-  rcNames <- c(
-    rownames(pvd$relMatrix),
-    as.character((maxId + 1):(maxId + totalKids))
+  if (relationship_method == "matrix") {
+    # prepare a new relationship matrix:
+    newRelMatSize <- nrow(pvd$individuals) + totalKids
+    extRelMat <- matrix(0, nrow = newRelMatSize, ncol = newRelMatSize)
+    extRelMat[1:nrow(pvd$individuals), 1:nrow(pvd$individuals)] <- pvd$relMatrix
+    rcNames <- c(
+      rownames(pvd$relMatrix),
+      as.character((maxId + 1):(maxId + totalKids))
     )
-  rownames(extRelMat) <- rcNames
-  colnames(extRelMat) <- rcNames
+    rownames(extRelMat) <- rcNames
+    colnames(extRelMat) <- rcNames
+  } else if (relationship_method == "graph") {
+    # extend the relationship graph all at once to save copying
+    allKids <- (maxId + 1):(maxId + totalKids)
+    newEdges <- numeric(4 * totalKids)
+    counter <- 0
+    lastId <- maxId
+    for (i in 1:number_of_couples) {
+      newEdges[seq(counter + 2, counter + 2 * litterSizes[i], 2)] <-
+        seq(lastId + 1, lastId + litterSizes[i], 1)
+      newEdges[seq(counter + 1, counter + 2 * litterSizes[i] - 1, 2)] <-
+        rep(as.numeric(momIDs[i]), times = litterSizes[i])
+      counter <- counter + 2 * litterSizes[i]
+      newEdges[seq(counter + 2, counter + 2 * litterSizes[i], 2)] <-
+        seq(lastId + 1, lastId + litterSizes[i], 1)
+      newEdges[seq(counter + 1, counter + 2 * litterSizes[i] - 1, 2)] <-
+        rep(as.numeric(dadIDs[i]), times = litterSizes[i])
+      counter <- counter + 2 * litterSizes[i]
+      lastId <- lastId + litterSizes[i]
+    }
+    relGraph <- pvd$relGraph +
+      vertices(allKids) +
+      edges(newEdges)
+  }
 
   # prepare for loop:
   m <- nrow(pvd$individuals)
@@ -250,20 +275,22 @@ reproduce <- function (pvd,
     ## enter into new individual data frame:
     extIndividuals[(m + 1):(m + n), ] <- litter
 
-    ## enter into new relationship matrix
-    litterMat <- matrix(0.5, n, n) + diag(0.5, n, n)
-    # fill in lower right with litter matrix:
-    extRelMat[(m + 1):(m + n), (m + 1):(m + n)] <- litterMat
-    # determine relationship of the children with each previous
-    # member of the population:
-    momId <- femaleMates[i, ]$id
-    dadId <- maleMates[i, ]$id
-    relation <- 0.5 * (extRelMat[momId, 1:m] + extRelMat[dadId, 1:m])
-    # construct matrix to become lower left, and fill in:
-    lowerLeft <- matrix(rep(relation, n), nrow = n, byrow = TRUE)
-    extRelMat[(m + 1):(m + n), 1:m] <- lowerLeft
-    # fill in the upper right:
-    extRelMat[1:m, (m + 1):(m + n)] <- t(lowerLeft)
+    if (relationship_method == "matrix") {
+      ## enter into new relationship matrix
+      litterMat <- matrix(0.5, n, n) + diag(0.5, n, n)
+      # fill in lower right with litter matrix:
+      extRelMat[(m + 1):(m + n), (m + 1):(m + n)] <- litterMat
+      # determine relationship of the children with each previous
+      # member of the population:
+      momId <- femaleMates[i, ]$id
+      dadId <- maleMates[i, ]$id
+      relation <- 0.5 * (extRelMat[momId, 1:m] + extRelMat[dadId, 1:m])
+      # construct matrix to become lower left, and fill in:
+      lowerLeft <- matrix(rep(relation, n), nrow = n, byrow = TRUE)
+      extRelMat[(m + 1):(m + n), 1:m] <- lowerLeft
+      # fill in the upper right:
+      extRelMat[1:m, (m + 1):(m + n)] <- t(lowerLeft)
+    }
 
     ## add to population adjustment:
     popAdjustment <- colSums(rbind(
@@ -277,10 +304,14 @@ reproduce <- function (pvd,
   }
 
   ## return results:
-  list(individuals = extIndividuals,
-       relMatrix = extRelMat,
-       maxId = lastId,
-       popAdjustment = popAdjustment)
-
+  results <- list(individuals = extIndividuals,
+                  maxId = lastId,
+                  popAdjustment = popAdjustment)
+  if (relationship_method == "matrix") {
+    results$relMatrix = extRelMat
+  } else if (relationship_method == "graph") {
+    results$relGraph <- relGraph
+  }
+  results
 }
 

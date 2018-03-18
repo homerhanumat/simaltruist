@@ -73,6 +73,83 @@ warnRelatives <- function(
   deathProb
 }
 
+#' Warning Relatives When Under Attack (Graph Version)
+#'
+#' Default function to govern behavior of warners under attack.
+#' Warner warns a specified number of the most closely-related
+#' individuals.  May be used as an alternative function in which
+#' the values of \code{warnable_relationship} and \code{dominant}
+#' are specified.
+#' @param individuals Data frame containing id, sex, warner-status,
+#' mother id and father id.  Value provided.
+#' @param number_warned Maximum number of individuals to warn.
+#' Value provided.
+#' @param warner_death_prob As in \code{simulate}. Value provided.
+#' @param nonwarner_death_prob As in \code{simulate}. Value provided.
+#' @param hider_death_prob As in \code{simulate}. Value provided.
+#' @param order Maximum distance a relative can have and still be warned.
+#' @param relGraph  The current relationship graph.  Value provided.
+#' @param dominant If \code{TRUE}, individuals with 1 or more altruistic
+#' alleles can warn.  Default version sets this to \code{FALSE}.
+#' @return A numerical vector of death probabilities in which the
+#' \eqn{i^{\text{th}}} element corresponds to row \eqn{i} of
+#' \code{individuals}.
+#' @examples
+#' \dontrun{
+#' pop <- simulate(sim_gens = 200,
+#'                 relationship_method = "graph",
+#'                 attack_behavior = list(
+#'                   fn = warnRelativesGraph,
+#'                   args = list(
+#'                     number_warned = 10,
+#'                     dominant = TRUE)))
+#' }
+#' @export
+warnRelativesGraph <- function(
+  individuals,
+  number_warned,
+  warner_death_prob,
+  nonwarner_death_prob,
+  hider_death_prob,
+  order = 2,
+  relGraph,
+  dominant = FALSE) {
+  id <- individuals$id
+  warner <- individuals$warner
+  deathProb <- rep(nonwarner_death_prob, times = length(id))
+  warnerCutoff <- ifelse(dominant, 1, 2)
+  warners <- id[warner >= warnerCutoff]
+  # randomly shuffle the warners:
+  warners <- sample(warners, replace = FALSE)
+  hideable <- id
+  while (length(warners) > 0) {
+    warnerId <- warners[1]
+    warners <- warners[-1]
+    hideable <- hideable[hideable != warnerId]
+    warnable <- unlist(ego(relGraph,
+                           order = order,
+                           nodes = as.numeric(warnerId),
+                           mindist = 1))
+    warnable <- relGraph %>%
+      ego(order = order,
+          nodes = as.numeric(warnerId),
+          mindist = 1) %>%
+      unlist() %>%
+      as.character()
+    warned <- head(warnable[warnable %in% hideable], number_warned)
+    if (length(warned) > 0) {
+      deathProb[id %in% warned] <- hider_death_prob
+      deathProb[id == warnerId] <- warner_death_prob
+
+    } else {
+      deathProb[id == warnerId] <- hider_death_prob
+    }
+    warners <- setdiff(warners, warned)
+    hideable <- setdiff(hideable, warned)
+  }
+  deathProb
+}
+
 #' Warning Other Warners
 #'
 #' Example of an alternative function to govern behavior of warners
@@ -152,7 +229,7 @@ warners2 <- function(
     warnerId <- warners[1]
     warners <- warners[-1]
     hideable <- hideable[hideable != warnerId]
-    warned <- head(hideable, n = 10)
+    warned <- head(hideable, n = number_warned)
     if (length(warned) > 0) {
       deathProb[id %in% warned] <- 0
       deathProb[id == warnerId] <- warner_death_prob
@@ -176,6 +253,7 @@ determineAttackDeath <- function(deathProb) {
 
 attack <- function(
   pvd,
+  relationship_method,
   attack_behavior) {
 
   if (!is.null(attack_behavior)) {
@@ -183,26 +261,41 @@ attack <- function(
     deathProb <- do.call(what = attack_behavior$fn,
                          args = c(providedArgs, attack_behavior$args))
   } else {
-    deathProb <- warnRelatives(
-      pvd$individuals,
-      number_warned = 10,
-      pvd$warner_death_prob,
-      pvd$nonwarner_death_prob,
-      pvd$hider_death_prob,
-      warnable_relationship = 0.25,
-      pvd$relMatrix,
-      dominant = FALSE
-    )
+    if (relationship_method == "matrix") {
+      deathProb <- warnRelatives(
+        pvd$individuals,
+        number_warned = 10,
+        pvd$warner_death_prob,
+        pvd$nonwarner_death_prob,
+        pvd$hider_death_prob,
+        warnable_relationship = 0.25,
+        pvd$relMatrix,
+        dominant = FALSE
+      )
+    } else if (relationship_method == "graph") {
+      deathProb <- warnRelativesGraph(
+        pvd$individuals,
+        number_warned = 10,
+        pvd$warner_death_prob,
+        pvd$nonwarner_death_prob,
+        pvd$hider_death_prob,
+        order = 2,
+        pvd$relGraph,
+        dominant = FALSE
+      )
+    }
   }
 
   dies <- determineAttackDeath(deathProb)
   dead <- subset(pvd$individuals, dies)
   survivors <- subset(pvd$individuals, !dies)
   popAdjustment <- -popAdjust(dead$sex, dead$warner)
-  relMatrix <- cutForDeaths(pvd$relMatrix, pvd$individuals$id, dies)
-  list(
+  results <- list(
     individuals = survivors,
-    relMatrix = relMatrix,
     popAdjustment = popAdjustment
   )
+  if (relationship_method == "matrix") {
+    results$relMatrix <- cutForDeaths(pvd$relMatrix, pvd$individuals$id, dies)
+  }
+  results
 }
