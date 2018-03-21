@@ -44,7 +44,7 @@ pop <- simulate(sim_gens = 200,
                   args = list(
                     prefs = matrix(
                       c(1, 5, 10, 1, 1, 1, 10, 5, 1),
-                      nrow = 3,
-                      ncol = 3))))
+                      nrow = 3, ncol = 3,
+                      byrow = TRUE))))
 }
 }

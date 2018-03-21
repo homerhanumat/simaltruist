@@ -194,8 +194,8 @@ A graph for free!
                   <span class="dt">args =</span> <span class="kw">list</span>(
                     <span class="dt">prefs =</span> <span class="kw">matrix</span>(
                       <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">5</span>, <span class="dv">1</span>),
-                      <span class="dt">nrow =</span> <span class="dv">3</span>,
-                      <span class="dt">ncol =</span> <span class="dv">3</span>))))</code></pre></div>
+                      <span class="dt">nrow =</span> <span class="dv">3</span>, <span class="dt">ncol =</span> <span class="dv">3</span>,
+                      <span class="dt">byrow =</span> <span class="ot">TRUE</span>))))</code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="index_files/figure-html/unnamed-chunk-8-1.png" alt="Sexual selection:  opposites attract!" width="90%"><p class="caption">
 Sexual selection: opposites attract!
@@ -223,10 +223,11 @@ Sexual selection: opposites attract!
 <td align="left">1</td>
 </tr>
 <tr class="odd">
-<td><em>female02</em></td>
-<td align="left">10</td>
-<td align="left">5</td>
+<td>
+<em>female2</em> 1</td>
+<td align="left">0 5</td>
 <td align="left">1</td>
+<td align="left"></td>
 </tr>
 </tbody>
 </table>
@@ -261,8 +262,8 @@ Sexual selection: opposites attract!
                 <span class="dt">culling_behavior =</span> <span class="kw">list</span>(<span class="dt">fn =</span> weakWarners,
                                         <span class="dt">args =</span> <span class="kw">list</span>()))</code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="index_files/figure-html/unnamed-chunk-10-1.png" alt="Weak wanrners go extinct!" width="90%"><p class="caption">
-Weak wanrners go extinct!
+<img src="index_files/figure-html/unnamed-chunk-10-1.png" alt="Weak warners go extinct!" width="90%"><p class="caption">
+Weak warners go extinct!
 </p>
 </div>
 <p>Note that <code>weakWarners()</code> has no arguments beyond those whose values are provided by the <code><a href="reference/simulate.html">simulate()</a></code> function, so we set <code>args</code> to the empty list.</p>

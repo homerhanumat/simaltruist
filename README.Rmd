@@ -136,8 +136,8 @@ pop <- simulate(sim_gens = 200,
                   args = list(
                     prefs = matrix(
                       c(1, 5, 10, 1, 1, 1, 10, 5, 1),
-                      nrow = 3,
-                      ncol = 3))))
+                      nrow = 3, ncol = 3,
+                      byrow = TRUE))))
 ```
 
 In the above example, the preference matrix is:
@@ -146,7 +146,7 @@ In the above example, the preference matrix is:
 -----           ------    ------    --------
 *female0*       1         5         10
 *female1*       1         1         1
-*female02*      10        5         1
+*female2*      10        5         1
 
 We see that 0-allele females prefer 1-allele and 2-allele males.  In fact when presented with three males, one of each genotype, she is five times as likely to prefer the 1-allele male over the 0-allele male, and ten times as likely to prefer the 2-allele male over the 0-allele male. Zero-allele females have a reverse preference, and single-allele females are indifferent in their choice.
 
@@ -182,7 +182,7 @@ This function gives warners a much higher chance of death during the culling pha
 
 An example of use of this function is as follows.  It assumes a scenario in which there are no predator attacks.
 
-```{r cache = TRUE, fig.cap = "Weak wanrners go extinct!"}
+```{r cache = TRUE, fig.cap = "Weak warners go extinct!"}
 pop <- simulate(sim_gens = 200, prob_attack = 0,
                 culling_behavior = list(fn = weakWarners,
                                         args = list()))
