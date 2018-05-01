@@ -146,7 +146,7 @@ In the above example, the preference matrix is:
 -----           ------    ------    --------
 *female0*       1         5         10
 *female1*       1         1         1
-*female2*      10        5         1
+*female2*       10        5         1
 
 We see that 0-allele females prefer 1-allele and 2-allele males.  In fact when presented with three males, one of each genotype, she is five times as likely to prefer the 1-allele male over the 0-allele male, and ten times as likely to prefer the 2-allele male over the 0-allele male. Zero-allele females have a reverse preference, and single-allele females are indifferent in their choice.
 
